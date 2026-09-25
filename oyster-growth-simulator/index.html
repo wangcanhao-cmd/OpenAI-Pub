@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Oyster Growth & Environment Simulator</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="hero">
+    <div>
+      <p class="eyebrow">JSU • MBRACE prototype</p>
+      <h1>Oyster Growth & Environment Simulator</h1>
+      <p class="sub">Interactive prototype for exploring how water-quality conditions and management scenarios could affect oyster growth trajectories.</p>
+    </div>
+    <div class="badge">Concept model — not yet calibrated</div>
+  </header>
+
+  <main class="layout">
+    <aside class="panel controls">
+      <div class="section-head">
+        <h2>Scenario controls</h2>
+        <button id="resetBtn" class="ghost">Reset</button>
+      </div>
+
+      <label>Deployment environment
+        <select id="siteType">
+          <option value="flow">Controlled flow-through</option>
+          <option value="deer" selected>Deer Island aquaculture</option>
+          <option value="reef">Experimental reef complex</option>
+        </select>
+      </label>
+
+      <div class="grid2">
+        <label>Start month
+          <select id="startMonth"></select>
+        </label>
+        <label>Simulation length
+          <select id="duration">
+            <option value="90">3 months</option>
+            <option value="180">6 months</option>
+            <option value="365" selected>1 year</option>
+            <option value="730">2 years</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="grid2">
+        <label>Initial shell height (mm)
+          <input id="initialSize" type="number" min="10" max="120" step="1" value="35" />
+        </label>
+        <label>Stocking density (oysters/m²)
+          <input id="density" type="number" min="1" max="1000" step="5" value="100" />
+        </label>
+      </div>
+
+      <h3>Water-quality parameters</h3>
+      <div id="sliders"></div>
+
+      <h3>Disturbance / contamination event</h3>
+      <label class="toggle-row"><input id="eventOn" type="checkbox" checked /> Enable event</label>
+      <div class="grid2">
+        <label>Start day
+          <input id="eventStart" type="number" min="1" max="730" step="1" value="120" />
+        </label>
+        <label>Duration (days)
+          <input id="eventDuration" type="number" min="1" max="120" step="1" value="21" />
+        </label>
+      </div>
+      <label>Event severity
+        <input id="eventSeverity" type="range" min="0" max="100" step="1" value="55" />
+        <span class="range-val"><span id="eventSeverityVal">55</span>%</span>
+      </label>
+      <p class="note">“Contamination” is exploratory here. The proposal does not specify a pollutant concentration variable, so this control applies a generic stress penalty only.</p>
+    </aside>
+
+    <section class="content">
+      <div class="cards">
+        <div class="metric"><span>Simulation day</span><strong id="dayMetric">0</strong></div>
+        <div class="metric"><span>Shell height</span><strong id="sizeMetric">35.0 mm</strong></div>
+        <div class="metric"><span>Growth change</span><strong id="growthMetric">+0.0 mm</strong></div>
+        <div class="metric"><span>Condition</span><strong id="conditionMetric">Baseline</strong></div>
+      </div>
+
+      <div class="panel chart-panel">
+        <div class="section-head">
+          <div>
+            <h2>Projected shell growth</h2>
+            <p>Illustrative trajectory generated from the selected conditions.</p>
+          </div>
+          <div class="legend"><span class="dot shell"></span>Shell height <span class="dot stress"></span>Stress event</div>
+        </div>
+        <canvas id="growthChart" width="1000" height="390" aria-label="Growth chart"></canvas>
+      </div>
+
+      <div class="panel timeline-panel">
+        <div class="timeline-top">
+          <button id="playBtn" class="primary">▶ Play</button>
+          <button id="pauseBtn" class="ghost">Pause</button>
+          <label>Speed
+            <select id="speed">
+              <option value="1">1×</option>
+              <option value="7" selected>7×</option>
+              <option value="30">30×</option>
+              <option value="90">90×</option>
+            </select>
+          </label>
+          <span id="dateLabel"></span>
+        </div>
+        <input id="timeline" type="range" min="0" max="365" value="0" step="1" />
+      </div>
+
+      <div class="panel">
+        <h2>Model interpretation</h2>
+        <div class="interpretation">
+          <div><span>Temperature</span><strong id="tempStatus">—</strong></div>
+          <div><span>Salinity</span><strong id="salStatus">—</strong></div>
+          <div><span>Dissolved oxygen</span><strong id="doStatus">—</strong></div>
+          <div><span>Overall stress index</span><strong id="stressStatus">—</strong></div>
+        </div>
+        <p class="disclaimer"><strong>Important:</strong> this is a front-end prototype, not the validated growth model promised by the proposal. The current response functions are transparent placeholder heuristics so the interface can be built now. Replace them with fitted coefficients after paired Hall-effect, morphometric, and sonde data are available.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Prototype variables mirror the proposal’s sonde measurements: salinity, temperature, dissolved oxygen, pH, turbidity, and chlorophyll. Density and disturbance controls are optional scenario extensions.
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
