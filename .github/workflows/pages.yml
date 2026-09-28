@@ -1,10 +1,11 @@
-name: Deploy Oyster Growth Simulator to GitHub Pages
+name: Deploy public tools to GitHub Pages
 
 on:
   push:
     branches: ["main"]
     paths:
       - "oyster-growth-simulator/**"
+      - "lutu-card-pool/**"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 
@@ -30,10 +31,17 @@ jobs:
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
+      - name: Build combined site
+        run: |
+          mkdir -p _site
+          cp -R oyster-growth-simulator/. _site/
+          mkdir -p _site/lutu-card-pool
+          cp -R lutu-card-pool/. _site/lutu-card-pool/
+
       - name: Upload site
         uses: actions/upload-pages-artifact@v3
         with:
-          path: oyster-growth-simulator
+          path: _site
 
       - name: Deploy to GitHub Pages
         id: deployment
