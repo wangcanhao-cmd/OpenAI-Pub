@@ -6,56 +6,179 @@
 <title>率土之滨 · 我的卡池</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#f5f6f8;color:#111;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:14px}
+body{margin:0;background:#f5f6f8;color:#111;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:12px}
 .app{max-width:720px;margin:0 auto}
 h1{font-size:23px;margin:0 0 5px}
-.sub{font-size:13px;color:#666;line-height:1.5;margin-bottom:12px}
-.bar{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
-.badge{background:#fff;border:1px solid #e1e4e8;border-radius:999px;padding:7px 10px;font-size:13px}
-button{border:1px solid #d5d8dc;background:#fff;border-radius:9px;padding:8px 11px;font-size:13px}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-.card{background:#fff;border:1px solid #e4e6e8;border-radius:11px;padding:10px 11px;min-width:0}
-.top{display:flex;align-items:center;gap:8px}
-.num{font-size:12px;color:#777;width:25px;flex:none}
-.name{font-size:16px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.note{font-size:12px;color:#b42318;margin-top:5px;padding-left:33px}
-.footer{font-size:12px;color:#777;margin:14px 2px;line-height:1.55}
-@media(max-width:560px){.grid{grid-template-columns:1fr}}
+.sub{font-size:13px;color:#666;line-height:1.5;margin-bottom:10px}
+.status{font-size:12px;background:#fff;border:1px solid #e2e5e9;border-radius:9px;padding:8px 10px;margin-bottom:10px}
+.tools{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-bottom:10px}
+button{min-height:40px;border:1px solid #d5d8dc;border-radius:9px;background:#fff;font-size:13px;padding:7px 9px}
+.jump{display:grid;grid-template-columns:1fr 90px;gap:7px;margin-bottom:10px}
+.jump input{height:40px;border:1px solid #d5d8dc;border-radius:9px;padding:0 10px;font-size:16px}
+.card{background:#fff;border:1px solid #e4e6e8;border-radius:11px;padding:9px;margin-bottom:8px}
+.card.sel{outline:2px solid #f0b429}
+.row{display:grid;grid-template-columns:28px 34px minmax(0,1fr);gap:6px;align-items:center}
+.owned{width:22px;height:22px}
+.idx{font-size:12px;color:#777;text-align:center}
+.name,.note{width:100%;min-width:0;height:38px;border:1px solid #e3e5e8;border-radius:8px;padding:0 8px;font-size:16px}
+.note{font-size:14px;margin-top:7px}
+.actions{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-top:7px}
+.actions button{min-height:34px;font-size:12px;padding:0 3px}
+.footer{font-size:12px;color:#777;line-height:1.5;margin:10px 2px}
+.savebox{display:none;background:#fff;border:1px solid #dfe3e7;border-radius:10px;padding:10px;margin-top:10px}
+.savebox textarea{width:100%;min-height:220px;border:1px solid #dfe3e7;border-radius:8px;padding:8px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+.save-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:8px}
+@media(max-width:560px){.app{max-width:430px}}
 </style>
 </head>
 <body>
 <div class="app">
 <h1>率土之滨 · 我的卡池</h1>
-<div class="sub">数据源：GitHub 公开仓库 <code>OpenAI-Pub/lutu-card-pool/cards.json</code>。此页面每次打开都会读取仓库里的最新卡池。</div>
-<div class="bar">
-  <div class="badge" id="count">读取中…</div>
-  <div class="badge" id="updated">更新时间：—</div>
+<div class="sub">公开数据源：GitHub <code>OpenAI-Pub/lutu-card-pool/cards.json</code>。页面支持本地编辑；完成后可一键生成最新版 JSON 并进入 GitHub 提交。</div>
+<div class="status" id="status">正在读取 GitHub 最新卡池…</div>
+
+<div class="tools">
+  <button id="add">＋ 新增武将</button>
+  <button id="ownedFirst">已拥有优先</button>
   <button id="copy">复制为文字</button>
+  <button id="saveGitHub">保存更新</button>
 </div>
-<div class="grid" id="list"></div>
-<div class="footer">以后卡池更新后，只要更新同目录的 <code>cards.json</code>，这个页面和 ChatGPT 读取到的版本就保持一致。</div>
+
+<div class="jump">
+  <input id="target" type="number" inputmode="numeric" min="1" placeholder="移动到第几位">
+  <button id="move">移动</button>
 </div>
+
+<div id="list"></div>
+
+<div class="savebox" id="savebox">
+  <b>最新版 cards.json</b>
+  <textarea id="jsonout" spellcheck="false"></textarea>
+  <div class="save-actions">
+    <button id="copyJson">复制 JSON</button>
+    <button id="openEdit">打开 GitHub 编辑页</button>
+  </div>
+  <div class="footer">GitHub Pages 是静态站，不能匿名直接写回仓库。点“复制 JSON”后，在 GitHub 编辑页全选原内容并粘贴，再提交即可。提交后这个页面和 ChatGPT 都会读取新版本。</div>
+</div>
+
+<div class="footer">本地编辑会自动保存在当前浏览器，刷新不会丢。GitHub 提交后才会成为所有设备和 ChatGPT 都能读取的正式版本。</div>
+</div>
+
 <script>
-let current=null;
+const localKey='stzb_pub_cards_edit_v1';
+let d=[],sel=null,sourceUpdated='';
+
 function esc(s){return String(s).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
-async function load(){
-  const r=await fetch('./cards.json?ts='+Date.now(),{cache:'no-store'});
-  if(!r.ok) throw new Error('HTTP '+r.status);
-  const j=await r.json(); current=j;
-  document.getElementById('count').textContent='已拥有 '+j.cards.length+' 张';
-  document.getElementById('updated').textContent='更新时间：'+(j.updatedAt||'—');
-  document.getElementById('list').innerHTML=j.cards.map(c=>`
-    <div class="card">
-      <div class="top"><span class="num">${String(c.id).padStart(2,'0')}</span><span class="name">${esc(c.name)}</span></div>
-      ${c.note?'<div class="note">'+esc(c.note)+'</div>':''}
-    </div>`).join('');
+function saveLocal(){localStorage.setItem(localKey,JSON.stringify({cards:d,sourceUpdated}))}
+function renumber(){d.forEach((c,i)=>c.id=i+1)}
+function render(){
+  renumber();
+  document.getElementById('list').innerHTML='';
+  d.forEach((c,i)=>{
+    const el=document.createElement('div');
+    el.className='card'+(sel===i?' sel':'');
+    el.dataset.i=i;
+    el.innerHTML=`<div class="row">
+      <input class="owned" type="checkbox" ${c.owned?'checked':''}>
+      <span class="idx">${String(i+1).padStart(2,'0')}</span>
+      <input class="name" value="${esc(c.name||'')}">
+    </div>
+    <input class="note" value="${esc(c.note||'')}" placeholder="备注，例如：拆 / 暂时分解">
+    <div class="actions">
+      <button class="top">置顶</button><button class="up">↑</button><button class="down">↓</button><button class="bottom">置底</button><button class="del">删除</button>
+    </div>`;
+    document.getElementById('list').appendChild(el);
+  });
+  document.getElementById('status').textContent='当前 '+d.length+' 张 · 本地编辑已保存';
+  saveLocal();
 }
+async function load(){
+  let remote=null;
+  try{
+    const r=await fetch('./cards.json?ts='+Date.now(),{cache:'no-store'});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    remote=await r.json();
+  }catch(e){
+    document.getElementById('status').textContent='GitHub读取失败，尝试本地缓存：'+e.message;
+  }
+  let local=null;
+  try{local=JSON.parse(localStorage.getItem(localKey))}catch(e){}
+  if(local && Array.isArray(local.cards) && local.sourceUpdated===remote?.updatedAt){
+    d=local.cards;sourceUpdated=local.sourceUpdated||'';
+  }else if(remote && Array.isArray(remote.cards)){
+    d=remote.cards.map(c=>({id:c.id,owned:c.owned!==false,name:c.name||'',note:c.note||''}));
+    sourceUpdated=remote.updatedAt||'';
+  }else if(local && Array.isArray(local.cards)){
+    d=local.cards;sourceUpdated=local.sourceUpdated||'';
+  }else{
+    d=[];
+  }
+  render();
+  if(remote)document.getElementById('status').textContent='已读取 GitHub 最新版 · '+d.length+' 张 · '+(remote.updatedAt||'');
+}
+function moveItem(from,to){
+  if(from<0||from>=d.length)return;
+  to=Math.max(0,Math.min(to,d.length-1));
+  const [x]=d.splice(from,1);d.splice(to,0,x);sel=to;render();
+}
+document.getElementById('list').addEventListener('click',e=>{
+  const card=e.target.closest('.card');if(!card)return;
+  const i=+card.dataset.i;
+  if(e.target.classList.contains('top'))return moveItem(i,0);
+  if(e.target.classList.contains('bottom'))return moveItem(i,d.length-1);
+  if(e.target.classList.contains('up')&&i>0)return moveItem(i,i-1);
+  if(e.target.classList.contains('down')&&i<d.length-1)return moveItem(i,i+1);
+  if(e.target.classList.contains('del')){d.splice(i,1);sel=null;render();return}
+  if(!e.target.matches('input')){sel=i;render()}
+});
+document.getElementById('list').addEventListener('input',e=>{
+  const card=e.target.closest('.card');if(!card)return;
+  const i=+card.dataset.i;
+  if(e.target.classList.contains('name'))d[i].name=e.target.value;
+  if(e.target.classList.contains('note'))d[i].note=e.target.value;
+  saveLocal();
+});
+document.getElementById('list').addEventListener('change',e=>{
+  const card=e.target.closest('.card');if(!card)return;
+  const i=+card.dataset.i;
+  if(e.target.classList.contains('owned'))d[i].owned=e.target.checked;
+  saveLocal();
+});
+document.getElementById('add').onclick=()=>{
+  const n=prompt('新武将名称：','新武将');if(n===null)return;
+  const raw=prompt(`插入到第几个后面？\n0=最前面；留空=最后\n当前共 ${d.length} 张`,'');
+  if(raw===null)return;
+  let p=raw.trim()===''?d.length:parseInt(raw,10);
+  if(Number.isNaN(p))return alert('请输入数字');
+  p=Math.max(0,Math.min(p,d.length));
+  d.splice(p,0,{id:0,owned:true,name:n.trim()||'新武将',note:''});sel=p;render();
+};
+document.getElementById('ownedFirst').onclick=()=>{d.sort((a,b)=>(b.owned?1:0)-(a.owned?1:0));sel=null;render()};
+document.getElementById('move').onclick=()=>{if(sel===null)return alert('先点一下要移动的卡片空白处');const p=parseInt(document.getElementById('target').value,10);if(!p||p<1)return alert('请输入有效位置');moveItem(sel,Math.min(p,d.length)-1)};
 document.getElementById('copy').onclick=async()=>{
-  if(!current)return;
-  const text=current.cards.map(c=>`[x] ${String(c.id).padStart(2,'0')} ${c.name}${c.note?' — '+c.note:''}`).join('\n');
+  renumber();
+  const text=d.map(c=>`${c.owned?'[x]':'[ ]'} ${String(c.id).padStart(2,'0')} ${c.name}${c.note?' — '+c.note:''}`).join('\n');
   try{await navigator.clipboard.writeText(text);alert('已复制')}catch(e){prompt('复制下面文字：',text)}
 };
-load().catch(e=>{document.getElementById('count').textContent='读取失败：'+e.message});
+function buildJson(){
+  renumber();
+  const now=new Date().toISOString().slice(0,10);
+  return JSON.stringify({updatedAt:now,count:d.length,cards:d},null,2);
+}
+document.getElementById('saveGitHub').onclick=()=>{
+  const box=document.getElementById('savebox');
+  document.getElementById('jsonout').value=buildJson();
+  box.style.display='block';
+  box.scrollIntoView({behavior:'smooth',block:'start'});
+};
+document.getElementById('copyJson').onclick=async()=>{
+  const text=document.getElementById('jsonout').value||buildJson();
+  try{await navigator.clipboard.writeText(text);alert('JSON 已复制')}catch(e){prompt('复制下面 JSON：',text)}
+};
+document.getElementById('openEdit').onclick=()=>{
+  window.open('https://github.com/wangcanhao-cmd/OpenAI-Pub/edit/main/lutu-card-pool/cards.json','_blank');
+};
+load();
 </script>
 </body>
 </html>
