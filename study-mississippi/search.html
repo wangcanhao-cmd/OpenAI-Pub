@@ -4,35 +4,145 @@
   <div class="container nav-wrap">
     <a class="brand" href="index.html" aria-label="Study Mississippi home"><img src="assets/user-horizontal-logo.jpg" alt="Study Mississippi"></a>
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-nav"><span></span><span></span><span></span><span class="sr-only">Open menu</span></button>
-    <nav id="main-nav" class="main-nav" aria-label="Main navigation"><a href="about.html">About MAIE / StudyMississippi</a><a href="member-institutions.html">Member Institutions</a><a href="study-in-mississippi.html">Study in Mississippi</a><a href="international-programs.html">International Programs</a><a href="international-students.html">Mississippi International Students</a><a href="outreach-partnerships.html">Outreach &amp; Partnerships</a><a href="governance.html">Governance</a><a href="contact.html">Contact Us</a><a href="search.html" aria-current="page">Search</a></nav>
+    <nav id="main-nav" class="main-nav" aria-label="Main navigation"><a href="about.html">About MAIE / StudyMississippi</a><a href="member-institutions.html">Member Institutions</a><a href="study-in-mississippi.html">Study in Mississippi</a><a href="international-programs.html">International Programs</a><a href="international-students.html">Mississippi International Students</a><a href="outreach-partnerships.html">Outreach &amp; Partnerships</a><a href="governance.html">Governance</a><a href="contact.html">Contact Us</a><form class="header-search" action="search.html" method="get" role="search"><label class="sr-only" for="header-search-page">Search</label><input id="header-search-page" name="q" type="search" placeholder="Search" autocomplete="off"><button type="submit" aria-label="Search">⌕</button></form></nav>
   </div>
 </header><main id="main"><section class="page-hero"><div class="container"><div class="breadcrumbs"><a href="index.html">Home</a> / Search</div><span class="section-kicker">Site search</span><h1>Search Study Mississippi</h1><p>Search the rebuilt site by section, topic, or legacy archive content.</p></div></section><section class="page-section"><div class="container">
 <div class="search-box"><input id="site-search" type="search" placeholder="Search: visa, member institutions, 2018 meetings, ESL..."><button class="button button-dark" id="search-button" type="button">Search</button></div>
 <div id="search-results" class="search-results"></div>
 <script>
-const items=[
-["About MAIE / StudyMississippi","about.html","mission board officers former officers strategic plan constitution knowledge community chairs"],
-["Member Institutions","member-institutions.html","member institutions institution profiles international office contacts external links Alcorn Meridian Millsaps Mississippi Christian State Valley Southern Piney Woods"],
-["Study in Mississippi","study-in-mississippi.html","Mississippi directory admissions requirements visa immigration health insurance CPT OPT why Mississippi universities colleges community colleges"],
-["International Programs","international-programs.html","ESL programs study abroad partner agencies English language"],
-["Mississippi International Students","international-students.html","international student overview data campus life cultural activities careers internships"],
-["Outreach & Partnerships","outreach-partnerships.html","collaboration records partners NAFSA Philadelphia Memphis USA Pavilion Mississippi Development Authority Commercial Service World Trade Center"],
-["Governance","governance.html","board meeting records resolutions annual conference 2018 state meetings executive board election news events"],
-["Contact Us","contact.html","contact listserv email studymississippi gmail studyMS"],
-["Migration Notes","migration-notes.html","conflicts legacy member lists Mississippi College Christian University Blue Mountain Vercel GitHub Pages"]
+const searchablePages = [
+  { title: 'Home', url: 'index.html' },
+  { title: 'About MAIE / StudyMississippi', url: 'about.html' },
+  { title: 'Member Institutions', url: 'member-institutions.html' },
+  { title: 'Study in Mississippi', url: 'study-in-mississippi.html' },
+  { title: 'International Programs', url: 'international-programs.html' },
+  { title: 'Mississippi International Students', url: 'international-students.html' },
+  { title: 'Outreach & Partnerships', url: 'outreach-partnerships.html' },
+  { title: 'Governance', url: 'governance.html' },
+  { title: 'Contact Us', url: 'contact.html' },
+  { title: 'Migration Notes', url: 'migration-notes.html' }
 ];
-function runSearch(){
- const q=document.getElementById("site-search").value.trim().toLowerCase();
- const out=document.getElementById("search-results");
- const matches=!q?items:items.filter(x=>(x[0]+" "+x[2]).toLowerCase().includes(q));
- out.innerHTML=matches.length?matches.map(x=>'<a class="search-result" href="'+x[1]+'"><h3>'+x[0]+'</h3><p>'+x[2]+'</p></a>').join(""):'<div class="pending-box"><p>No matching section found.</p></div>';
+
+const input = document.getElementById('site-search');
+const button = document.getElementById('search-button');
+const results = document.getElementById('search-results');
+let pageIndex = null;
+
+function cleanText(value) {
+  return (value || '').replace(/\s+/g, ' ').trim();
 }
-document.getElementById("search-button").addEventListener("click",runSearch);
-document.getElementById("site-search").addEventListener("input",runSearch);
-runSearch();
+
+function normalize(value) {
+  return cleanText(value).toLowerCase();
+}
+
+async function buildIndex() {
+  if (pageIndex) return pageIndex;
+
+  pageIndex = await Promise.all(searchablePages.map(async page => {
+    try {
+      const response = await fetch(page.url, { cache: 'no-store' });
+      if (!response.ok) throw new Error('HTTP ' + response.status);
+      const source = await response.text();
+      const doc = new DOMParser().parseFromString(source, 'text/html');
+
+      doc.querySelectorAll('script, style, nav, footer, .utility-bar').forEach(el => el.remove());
+
+      const main = doc.querySelector('main');
+      const title = cleanText(doc.querySelector('h1')?.textContent) || page.title;
+      const body = cleanText(main?.textContent || doc.body.textContent);
+
+      return { ...page, title, body, haystack: normalize(title + ' ' + body) };
+    } catch (error) {
+      return { ...page, body: '', haystack: normalize(page.title), error: true };
+    }
+  }));
+
+  return pageIndex;
+}
+
+function makeSnippet(body, query, tokens) {
+  if (!body) return 'Open this page to view its content.';
+  const lower = body.toLowerCase();
+  let pos = lower.indexOf(query.toLowerCase());
+  if (pos < 0) {
+    for (const token of tokens) {
+      pos = lower.indexOf(token);
+      if (pos >= 0) break;
+    }
+  }
+  if (pos < 0) pos = 0;
+  const start = Math.max(0, pos - 95);
+  const end = Math.min(body.length, pos + 190);
+  return (start > 0 ? '…' : '') + body.slice(start, end) + (end < body.length ? '…' : '');
+}
+
+async function runSearch(updateAddress = false) {
+  const q = cleanText(input.value);
+  const qNorm = normalize(q);
+
+  if (updateAddress) {
+    const next = q ? 'search.html?q=' + encodeURIComponent(q) : 'search.html';
+    history.replaceState(null, '', next);
+  }
+
+  if (!qNorm) {
+    results.innerHTML = '<div class="pending-box"><p>Enter a word or phrase above to search the Study Mississippi website.</p></div>';
+    return;
+  }
+
+  results.innerHTML = '<p class="search-status">Searching the website…</p>';
+
+  const index = await buildIndex();
+  const tokens = qNorm.split(/\s+/).filter(Boolean);
+
+  const matches = index.map(page => {
+    const phraseMatch = page.haystack.includes(qNorm);
+    const tokenHits = tokens.filter(token => page.haystack.includes(token)).length;
+    const titleNorm = normalize(page.title);
+    let score = tokenHits * 10;
+    if (phraseMatch) score += 50;
+    if (titleNorm.includes(qNorm)) score += 80;
+    tokens.forEach(token => {
+      if (titleNorm.includes(token)) score += 15;
+    });
+    return { ...page, phraseMatch, tokenHits, score };
+  }).filter(page => page.phraseMatch || page.tokenHits > 0)
+    .sort((a, b) => b.score - a.score);
+
+  if (!matches.length) {
+    results.innerHTML = '<div class="pending-box"><p>No results found for <strong>' +
+      q.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])) +
+      '</strong>.</p></div>';
+    return;
+  }
+
+  results.innerHTML =
+    '<p class="search-status">' + matches.length + ' result' + (matches.length === 1 ? '' : 's') + ' found.</p>' +
+    matches.map(page => {
+      const snippet = makeSnippet(page.body, q, tokens);
+      return '<a class="search-result" href="' + page.url + '">' +
+        '<span class="result-path">' + page.url + '</span>' +
+        '<h3>' + page.title + '</h3>' +
+        '<p>' + snippet.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])) + '</p>' +
+        '</a>';
+    }).join('');
+}
+
+button.addEventListener('click', () => runSearch(true));
+input.addEventListener('keydown', event => {
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    runSearch(true);
+  }
+});
+
+const initialQ = new URLSearchParams(window.location.search).get('q') || '';
+input.value = initialQ;
+runSearch(false);
 </script>
 </div></section></main><footer class="site-footer"><div class="container footer-grid">
     <div class="footer-brand"><img src="assets/user-horizontal-logo.jpg" alt="Study Mississippi"><p>Study Mississippi is being rebuilt as the public-facing gateway for MAIE / StudyMississippi.</p></div>
     <div><h3>Explore</h3><a href="member-institutions.html">Member Institutions</a><a href="study-in-mississippi.html">Study in Mississippi</a><a href="international-programs.html">International Programs</a><a href="international-students.html">Mississippi International Students</a></div>
-    <div><h3>Organization</h3><a href="about.html">About MAIE / StudyMississippi</a><a href="outreach-partnerships.html">Outreach &amp; Partnerships</a><a href="governance.html">Governance</a><a href="contact.html">Contact Us</a><form class="header-search" action="search.html" method="get" role="search"><label class="sr-only" for="header-search-searchhtml">Search</label><input id="header-search-searchhtml" name="q" type="search" placeholder="Search"><button type="submit" aria-label="Search">⌕</button></form></div>
+    <div><h3>Organization</h3><a href="about.html">About MAIE / StudyMississippi</a><a href="outreach-partnerships.html">Outreach &amp; Partnerships</a><a href="governance.html">Governance</a><a href="contact.html">Contact Us</a><a href="search.html">Search</a></div>
   </div><div class="container footer-bottom"><span>© <span id="year"></span> Study Mississippi.</span><span><a href="https://maiestudyms.mystrikingly.com/" target="_blank" rel="noreferrer">Legacy website</a> · <a href="migration-notes.html">Migration notes</a></span></div></footer><script src="script.js"></script></body></html>
