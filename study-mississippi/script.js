@@ -17,3 +17,8 @@ if (menuToggle && nav) {
 
 const year = document.querySelector('#year');
 if (year) year.textContent = new Date().getFullYear();
+document.querySelectorAll('[data-pending-submit]').forEach(button => {
+  button.addEventListener('click', () => {
+    alert('This form was migrated from the legacy site, but a new submission endpoint has not been configured yet.');
+  });
+});
