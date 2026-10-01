@@ -29,8 +29,8 @@ button{font:inherit}
 
 .site-header{position:relative;z-index:50;background:#fff;box-shadow:0 1px 0 rgba(7,31,59,.08)}
 .nav-wrap{display:flex;align-items:center;justify-content:space-between;gap:30px;min-height:88px}
-.brand{display:block;width:min(340px,44vw)}
-.brand img{width:100%;height:auto}
+.brand{display:block;width:min(300px,40vw)}
+.brand img{width:100%;height:auto;max-height:72px;object-fit:contain}
 .main-nav{display:flex;align-items:center;gap:24px;font-weight:750;font-size:.94rem}
 .main-nav>a:not(.nav-cta){position:relative}
 .main-nav>a:not(.nav-cta)::after{content:"";position:absolute;height:2px;background:var(--red);left:0;right:100%;bottom:-6px;transition:.2s ease}
@@ -139,7 +139,7 @@ button{font:inherit}
 
 .site-footer{background:#051628;color:#d8e3ee;padding:68px 0 26px}
 .footer-grid{display:grid;grid-template-columns:1.8fr .6fr .6fr;gap:70px}
-.footer-brand img{width:360px;filter:brightness(0) invert(1);opacity:.95}
+.footer-brand img{width:320px;opacity:.95}
 .footer-brand p{color:#9fb0c1;max-width:440px}
 .site-footer h3{color:#fff;font-size:.95rem;margin:0 0 16px}
 .site-footer a{display:block;color:#aebdcb;margin:8px 0;font-size:.9rem}
