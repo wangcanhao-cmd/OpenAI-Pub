@@ -317,3 +317,46 @@ button{font:inherit}
   .header-search{width:100%;min-width:0;margin-left:0;margin-top:6px}
   .main-nav>a{font-size:.92rem}
 }
+
+/* Final logo placement overrides */
+.site-header .brand{
+  flex:0 0 260px;
+  width:260px;
+  min-width:260px;
+}
+.site-header .brand img{
+  display:block;
+  width:100%;
+  height:auto;
+  max-height:88px;
+  object-fit:contain;
+}
+.site-footer .footer-brand img{
+  display:block;
+  width:155px;
+  max-width:155px;
+  max-height:240px;
+  height:auto;
+  object-fit:contain;
+  opacity:1;
+  filter:none;
+  margin-bottom:18px;
+}
+@media(max-width:1280px){
+  .site-header .brand{
+    flex:0 0 230px;
+    width:230px;
+    min-width:230px;
+  }
+}
+@media(max-width:700px){
+  .site-header .brand{
+    flex:0 0 210px;
+    width:210px;
+    min-width:210px;
+  }
+  .site-footer .footer-brand img{
+    width:135px;
+    max-width:135px;
+  }
+}
