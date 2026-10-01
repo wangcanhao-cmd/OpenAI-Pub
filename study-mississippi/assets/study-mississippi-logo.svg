@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 180" role="img" aria-labelledby="title desc">
+  <title id="title">Study Mississippi</title>
+  <desc id="desc">Study Mississippi wordmark with a globe and education symbol.</desc>
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f6b21a"/>
+      <stop offset="1" stop-color="#d88a00"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(12 16)">
+    <circle cx="70" cy="70" r="58" fill="#071f3b" stroke="#f6b21a" stroke-width="8"/>
+    <path d="M24 70h92M70 12c-18 18-28 37-28 58s10 40 28 58M70 12c18 18 28 37 28 58s-10 40-28 58M15 48h110M15 92h110" fill="none" stroke="url(#g)" stroke-width="6" stroke-linecap="round" opacity=".96"/>
+    <path d="M70 18 131 41 70 64 9 41 70 18Z" fill="#fff" stroke="#071f3b" stroke-width="5"/>
+    <path d="M117 48v30" fill="none" stroke="#071f3b" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="117" cy="82" r="5" fill="#f6b21a"/>
+  </g>
+  <text x="160" y="82" font-family="Arial, Helvetica, sans-serif" font-size="58" font-weight="800" fill="#071f3b" letter-spacing="1">STUDY MISSISSIPPI</text>
+  <text x="163" y="127" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#b3262e" letter-spacing="4">GLOBAL EDUCATION • LOCAL CONNECTION</text>
+</svg>
