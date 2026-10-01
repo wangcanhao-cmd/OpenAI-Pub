@@ -32,3 +32,39 @@ document.querySelectorAll('.site-footer .footer-brand img').forEach(img => {
   img.src = 'assets/study-mississippi-vertical-exact.svg';
   img.alt = 'Study Mississippi / Mississippi Association of International Educators';
 });
+
+/* Header search normalization */
+(function () {
+  const nav = document.querySelector('.main-nav');
+  if (!nav) return;
+
+  let form = nav.querySelector('.header-search');
+  const searchLink = Array.from(nav.querySelectorAll('a')).find(a => {
+    const href = a.getAttribute('href') || '';
+    return href === 'search.html' || href.endsWith('/search.html');
+  });
+
+  if (!form) {
+    form = document.createElement('form');
+    form.className = 'header-search';
+    form.action = 'search.html';
+    form.method = 'get';
+    form.setAttribute('role', 'search');
+    form.innerHTML = '<label class="sr-only" for="global-site-search">Search</label>' +
+      '<input id="global-site-search" name="q" type="search" placeholder="Search" autocomplete="off">' +
+      '<button type="submit" aria-label="Search">⌕</button>';
+
+    if (searchLink) {
+      searchLink.replaceWith(form);
+    } else {
+      nav.appendChild(form);
+    }
+  } else if (searchLink) {
+    searchLink.remove();
+  }
+
+  const input = form.querySelector('input[name="q"]');
+  if (input && /search\.html$/.test(window.location.pathname)) {
+    input.value = new URLSearchParams(window.location.search).get('q') || '';
+  }
+})();
