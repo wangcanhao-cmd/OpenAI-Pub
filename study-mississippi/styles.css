@@ -39,13 +39,32 @@ button{font:inherit}
 .menu-toggle{display:none;border:0;background:transparent;padding:8px}
 .menu-toggle span:not(.sr-only){display:block;width:26px;height:2px;background:var(--navy);margin:5px 0}
 
-.hero{position:relative;min-height:690px;display:flex;align-items:center;color:#fff;overflow:hidden;background:
-  linear-gradient(90deg,rgba(4,22,43,.88) 0%,rgba(4,22,43,.65) 45%,rgba(4,22,43,.16) 100%),
-  url("https://tile.loc.gov/storage-services/service/pnp/highsm/36800/36826v.jpg") center 42% / cover no-repeat,
-  linear-gradient(135deg,#123d63,#6887a0)}
+.hero{
+  position:relative;
+  min-height:650px;
+  display:flex;
+  align-items:center;
+  color:#fff;
+  overflow:hidden;
+  background:
+    linear-gradient(90deg,
+      rgba(4,22,43,.96) 0%,
+      rgba(4,22,43,.82) 34%,
+      rgba(4,22,43,.42) 58%,
+      rgba(4,22,43,.10) 82%,
+      rgba(4,22,43,.04) 100%),
+    url("https://upload.wikimedia.org/wikipedia/commons/1/17/The_Biloxi_Lighthouse.jpg") right center / auto 100% no-repeat,
+    linear-gradient(135deg,#071f3b,#0b2f55);
+}
 .hero::after{content:"";position:absolute;inset:auto -80px -190px auto;width:520px;height:520px;border:70px solid rgba(244,178,35,.16);border-radius:50%}
 .hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,transparent 62%,rgba(7,31,59,.24))}
-.hero-content{position:relative;z-index:2;padding:90px 0 105px}
+.hero-content{
+  position:relative;
+  z-index:2;
+  width:min(1180px,calc(100% - 40px));
+  margin:0 auto;
+  padding:90px 0 105px;
+}
 .eyebrow,.section-kicker{display:inline-block;color:var(--red);font-size:.82rem;font-weight:900;letter-spacing:.16em;text-transform:uppercase}
 .eyebrow{color:var(--gold);margin-bottom:18px}
 .hero h1{font-family:Georgia,"Times New Roman",serif;font-size:clamp(3.5rem,7vw,6.7rem);line-height:.92;letter-spacing:-.055em;margin:0;max-width:900px}
@@ -165,7 +184,11 @@ button{font:inherit}
   .nav-wrap{min-height:78px}
   .brand{width:255px;max-width:72vw}
   .main-nav{top:78px}
-  .hero{min-height:600px;background-position:58% 50%}
+  .hero{
+    min-height:560px;
+    background-position:right top;
+    background-size:auto 100%;
+  }
   .hero-content{padding:72px 0 85px}
   .hero h1{font-size:clamp(3.1rem,15vw,5rem)}
   .hero-copy{font-size:1rem}
@@ -381,4 +404,9 @@ button{font:inherit}
 .profile-card .profile-photo{
   display:block;
   max-width:100%;
+}
+
+/* Hero text placement restored to the pre-split layout */
+.hero-content > *{
+  max-width:650px;
 }
