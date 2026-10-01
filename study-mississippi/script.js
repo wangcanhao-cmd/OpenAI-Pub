@@ -22,3 +22,13 @@ document.querySelectorAll('[data-pending-submit]').forEach(button => {
     alert('This form was migrated from the legacy site, but a new submission endpoint has not been configured yet.');
   });
 });
+
+/* Official Study Mississippi logo placement */
+document.querySelectorAll('.site-header .brand img').forEach(img => {
+  img.src = 'assets/study-mississippi-horizontal-exact.svg';
+  img.alt = 'Study Mississippi';
+});
+document.querySelectorAll('.site-footer .footer-brand img').forEach(img => {
+  img.src = 'assets/study-mississippi-vertical-exact.svg';
+  img.alt = 'Study Mississippi / Mississippi Association of International Educators';
+});
