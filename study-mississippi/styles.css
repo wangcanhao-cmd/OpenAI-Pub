@@ -274,10 +274,31 @@ button{font:inherit}
 .archive-note{border-left:5px solid var(--gold);background:#fff8e6;padding:18px 22px;border-radius:10px;margin:24px 0;color:#59460e}
 .source-note{font-size:.82rem;color:var(--muted);margin-top:18px}
 .profile-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
-.profile-card{border:1px solid var(--line);border-radius:20px;padding:24px;background:#fff}
-.profile-card h3{margin:0 0 4px}
-.profile-card .role{font-weight:800;color:var(--red)}
-.profile-card p{margin:5px 0;color:var(--muted)}
+.profile-card{
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:24px;
+  background:#fff;
+  display:grid;
+  grid-template-columns:210px minmax(0,1fr);
+  column-gap:24px;
+  align-items:start;
+}
+.profile-card h3{
+  grid-column:2;
+  margin:2px 0 5px;
+  align-self:start;
+}
+.profile-card .role{
+  grid-column:2;
+  font-weight:800;
+  color:var(--red);
+}
+.profile-card p{
+  grid-column:2;
+  margin:5px 0;
+  color:var(--muted);
+}
 .member-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
 .member-card{display:flex;flex-direction:column;justify-content:space-between;min-height:150px;border:1px solid var(--line);border-radius:18px;padding:20px;background:#fff}
 .member-card h3{margin:0 0 6px;font-size:1.08rem}
@@ -321,13 +342,15 @@ button{font:inherit}
 }
 
 .profile-photo{
-  width:180px;
-  height:180px;
+  grid-column:1;
+  grid-row:1 / span 10;
+  width:210px;
+  height:210px;
   aspect-ratio:1 / 1;
   object-fit:cover;
   object-position:center 18%;
   border-radius:14px;
-  margin-bottom:18px;
+  margin:0;
   background:var(--cream);
 }
 
@@ -403,10 +426,29 @@ button{font:inherit}
 
 .profile-card .profile-photo{
   display:block;
-  max-width:100%;
+  max-width:none;
 }
 
 /* Hero text placement restored to the pre-split layout */
 .hero-content > *{
   max-width:650px;
+}
+
+.profile-photo-placeholder{
+  border:1px dashed #c7d0d9;
+  background:
+    linear-gradient(135deg,rgba(7,31,59,.025),rgba(179,38,46,.025)),
+    #f3f5f7;
+}
+@media(max-width:700px){
+  .profile-card{
+    grid-template-columns:132px minmax(0,1fr);
+    column-gap:18px;
+    padding:18px;
+  }
+  .profile-photo{
+    width:132px;
+    height:132px;
+    border-radius:12px;
+  }
 }
