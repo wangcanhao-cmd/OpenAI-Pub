@@ -6,6 +6,7 @@ on:
     paths:
       - "oyster-growth-simulator/**"
       - "lutu-card-pool/**"
+      - "study-mississippi/**"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 
@@ -37,6 +38,8 @@ jobs:
           cp -R oyster-growth-simulator/. _site/
           mkdir -p _site/lutu-card-pool
           cp -R lutu-card-pool/. _site/lutu-card-pool/
+          mkdir -p _site/study-mississippi
+          cp -R study-mississippi/. _site/study-mississippi/
 
       - name: Upload site
         uses: actions/upload-pages-artifact@v3
