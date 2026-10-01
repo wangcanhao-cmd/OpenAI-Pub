@@ -237,3 +237,62 @@ button{font:inherit}
   .directory-heading{display:block}
   .directory-heading p{margin-top:10px}
 }
+
+/* v2 information architecture */
+.main-nav{gap:14px;font-size:.82rem;white-space:nowrap}
+.main-nav a[aria-current="page"]{color:var(--red)}
+.brand{width:min(250px,32vw)}
+.brand img{max-height:68px;object-fit:contain}
+.architecture-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.architecture-card{display:block;border:1px solid var(--line);background:#fff;border-radius:20px;padding:24px;transition:.2s ease}
+.architecture-card:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:transparent}
+.architecture-card h3{margin:8px 0 8px;font-size:1.22rem}
+.architecture-card p{margin:0;color:var(--muted);font-size:.94rem}
+.archive-note{border-left:5px solid var(--gold);background:#fff8e6;padding:18px 22px;border-radius:10px;margin:24px 0;color:#59460e}
+.source-note{font-size:.82rem;color:var(--muted);margin-top:18px}
+.profile-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+.profile-card{border:1px solid var(--line);border-radius:20px;padding:24px;background:#fff}
+.profile-card h3{margin:0 0 4px}
+.profile-card .role{font-weight:800;color:var(--red)}
+.profile-card p{margin:5px 0;color:var(--muted)}
+.member-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.member-card{display:flex;flex-direction:column;justify-content:space-between;min-height:150px;border:1px solid var(--line);border-radius:18px;padding:20px;background:#fff}
+.member-card h3{margin:0 0 6px;font-size:1.08rem}
+.member-card p{margin:0;color:var(--muted);font-size:.9rem}
+.member-card span{margin-top:14px;color:var(--red);font-weight:800;font-size:.86rem}
+.legacy-member{display:grid;grid-template-columns:86px 1fr;gap:16px;align-items:center}
+.legacy-member img{width:76px;height:64px;object-fit:contain;background:#fff;border-radius:10px}
+.record-table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.record-table th,.record-table td{text-align:left;padding:14px 16px;border-bottom:1px solid var(--line);vertical-align:top}
+.record-table th{background:var(--navy);color:#fff;font-size:.86rem}
+.record-table tr:last-child td{border-bottom:0}
+.status-chip{display:inline-block;border-radius:999px;padding:5px 9px;background:var(--cream);font-weight:800;font-size:.78rem}
+.pending-box{border:1px dashed #b8c4cf;border-radius:18px;padding:24px;background:#fafcfe}
+.pending-box h3{margin-top:0}
+.pending-form{display:grid;gap:14px}
+.pending-form label{font-weight:800;font-size:.9rem}
+.pending-form input,.pending-form textarea{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:10px;font:inherit;background:#fff}
+.pending-form textarea{min-height:120px;resize:vertical}
+.pending-form button{border:0;cursor:pointer}
+.search-box{display:flex;gap:10px;max-width:760px;margin:28px 0}
+.search-box input{flex:1;padding:15px 18px;border:1px solid var(--line);border-radius:999px;font:inherit}
+.search-results{display:grid;gap:14px}
+.search-result{border:1px solid var(--line);border-radius:16px;padding:18px;background:#fff}
+.search-result h3{margin:0 0 5px}
+.search-result p{margin:0;color:var(--muted)}
+.conflict-list{display:grid;gap:14px}
+.conflict-item{border:1px solid #e4c6c8;background:#fff7f7;border-radius:16px;padding:18px}
+.conflict-item h3{margin:0 0 6px;color:#8f1f25}
+.link-list{display:grid;gap:12px}
+.link-row{display:flex;justify-content:space-between;gap:18px;align-items:center;border-bottom:1px solid var(--line);padding:14px 0}
+.link-row strong{display:block}
+.link-row span{color:var(--muted);font-size:.9rem}
+.legacy-quote{font-family:Georgia,serif;font-size:1.4rem;font-style:italic}
+@media(max-width:1180px){
+  .menu-toggle{display:block}
+  .main-nav{display:none;position:absolute;left:0;right:0;top:122px;background:#fff;padding:20px;box-shadow:0 18px 35px rgba(7,31,59,.12);flex-direction:column;align-items:stretch;white-space:normal}
+  .main-nav.open{display:flex}
+}
+@media(max-width:900px){
+  .architecture-grid,.member-grid,.profile-grid{grid-template-columns:1fr}
+}
