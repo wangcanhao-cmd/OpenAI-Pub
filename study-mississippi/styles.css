@@ -446,3 +446,130 @@ button{font:inherit}
     border-radius:12px;
   }
 }
+
+/* Mississippi discovery resources */
+.discover-mississippi{
+  background:#f5f8fb;
+}
+.discover-feature-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:22px;
+}
+.discover-feature{
+  position:relative;
+  min-height:380px;
+  display:flex;
+  align-items:flex-end;
+  overflow:hidden;
+  border-radius:26px;
+  isolation:isolate;
+  background-color:var(--navy);
+  background-size:cover;
+  background-position:center top;
+  box-shadow:0 16px 42px rgba(7,31,59,.12);
+  transition:transform .2s ease,box-shadow .2s ease;
+}
+.discover-feature:hover{
+  transform:translateY(-4px);
+  box-shadow:0 22px 54px rgba(7,31,59,.18);
+}
+.discover-explorems{
+  background-image:url("https://image.thum.io/get/noanimate/width/1200/crop/650/maxAge/24/https://exploremississippi.com/");
+}
+.discover-visitms{
+  background-image:url("https://image.thum.io/get/noanimate/width/1200/crop/650/maxAge/24/https://visitmississippi.org/");
+}
+.discover-feature-shade{
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  background:
+    linear-gradient(180deg,rgba(5,22,40,.08) 8%,rgba(5,22,40,.18) 42%,rgba(5,22,40,.92) 100%);
+}
+.discover-feature-content{
+  width:100%;
+  padding:34px;
+  color:#fff;
+}
+.external-badge{
+  display:inline-block;
+  margin-bottom:12px;
+  padding:7px 11px;
+  border:1px solid rgba(255,255,255,.36);
+  border-radius:999px;
+  background:rgba(7,31,59,.40);
+  backdrop-filter:blur(8px);
+  font-size:.72rem;
+  font-weight:850;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.discover-feature h3{
+  margin:0 0 9px;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(2rem,3vw,3rem);
+}
+.discover-feature p{
+  max-width:610px;
+  margin:0 0 16px;
+  color:#e5edf5;
+}
+.discover-feature strong{
+  color:var(--gold);
+  font-size:.92rem;
+}
+.discover-resource-links{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:14px;
+  margin-top:20px;
+}
+.discover-resource-links a{
+  display:block;
+  min-height:150px;
+  padding:22px;
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:#fff;
+  transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;
+}
+.discover-resource-links a:hover{
+  transform:translateY(-3px);
+  border-color:#bcc9d5;
+  box-shadow:0 12px 28px rgba(7,31,59,.08);
+}
+.discover-resource-links span{
+  display:block;
+  margin-bottom:10px;
+  color:var(--red);
+  font-size:.72rem;
+  font-weight:900;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+}
+.discover-resource-links strong{
+  display:block;
+  color:var(--navy);
+  font-size:1.05rem;
+  margin-bottom:8px;
+}
+.discover-resource-links em{
+  display:block;
+  color:var(--muted);
+  font-size:.88rem;
+  font-style:normal;
+}
+.discover-preview-note{
+  margin:16px 2px 0;
+  color:var(--muted);
+  font-size:.76rem;
+}
+@media(max-width:900px){
+  .discover-feature-grid,.discover-resource-links{grid-template-columns:1fr}
+  .discover-feature{min-height:340px}
+}
+@media(max-width:600px){
+  .discover-feature{min-height:310px}
+  .discover-feature-content{padding:26px 22px}
+}
