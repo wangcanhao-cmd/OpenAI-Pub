@@ -68,3 +68,16 @@ document.querySelectorAll('.site-footer .footer-brand img').forEach(img => {
     input.value = new URLSearchParams(window.location.search).get('q') || '';
   }
 })();
+
+
+/* Global stylesheet cache version */
+(() => {
+  const version = "20261002-left150-headeredge";
+  document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
+    const href = link.getAttribute("href") || "";
+    if (/^styles\.css(?:\?|$)/.test(href)) {
+      const next = "styles.css?v=" + version;
+      if (href !== next) link.setAttribute("href", next);
+    }
+  });
+})();
