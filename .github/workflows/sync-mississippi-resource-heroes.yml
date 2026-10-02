@@ -1,0 +1,216 @@
+name: Sync Mississippi resource hero images
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 9 * * *"
+  push:
+    paths:
+      - ".github/workflows/sync-mississippi-resource-heroes.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install browser and image tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/ms-hero-sync
+          cd /tmp/ms-hero-sync
+          npm init -y >/dev/null 2>&1
+          npm install playwright sharp >/dev/null 2>&1
+          npx playwright install --with-deps chromium >/dev/null 2>&1
+
+      - name: Extract actual homepage hero media
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p study-mississippi/assets/external
+
+          cat > /tmp/ms-hero-sync/sync.mjs <<'EOF'
+          import { chromium } from "playwright";
+          import sharp from "sharp";
+          import fs from "node:fs/promises";
+          import path from "node:path";
+
+          const targets = [
+            {
+              name: "explore-mississippi",
+              url: "https://exploremississippi.com/",
+              out: "study-mississippi/assets/external/explore-mississippi-hero.webp",
+            },
+            {
+              name: "visit-mississippi",
+              url: "https://visitmississippi.org/",
+              out: "study-mississippi/assets/external/visit-mississippi-hero.webp",
+            },
+          ];
+
+          const browser = await chromium.launch({headless:true});
+          const manifest = {};
+
+          async function downloadImage(url, referer) {
+            const res = await fetch(url, {
+              headers: {
+                "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/136 Safari/537.36",
+                "referer": referer,
+                "accept": "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8"
+              },
+              redirect: "follow"
+            });
+            if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
+            const type = res.headers.get("content-type") || "";
+            if (!type.startsWith("image/")) throw new Error(`Not an image (${type}) for ${url}`);
+            return Buffer.from(await res.arrayBuffer());
+          }
+
+          for (const target of targets) {
+            const page = await browser.newPage({viewport:{width:1600,height:1000}});
+            console.log(`Loading ${target.url}`);
+
+            await page.goto(target.url, {waitUntil:"domcontentloaded", timeout:90000});
+            await page.waitForTimeout(6000);
+
+            const candidates = await page.evaluate(() => {
+              const out = [];
+              const add = (url, el, kind) => {
+                if (!url || url.startsWith("data:") || url.startsWith("blob:")) return;
+                const r = el.getBoundingClientRect();
+                if (r.width < 450 || r.height < 220) return;
+                if (r.bottom < 0 || r.top > 1050) return;
+                const visible = getComputedStyle(el).display !== "none" && getComputedStyle(el).visibility !== "hidden";
+                if (!visible) return;
+
+                const clippedTop = Math.max(0, r.top);
+                const clippedBottom = Math.min(1000, r.bottom);
+                const visibleHeight = Math.max(0, clippedBottom - clippedTop);
+                const visibleArea = Math.max(0, Math.min(1600, r.width)) * visibleHeight;
+                const topBonus = r.top < 180 ? 2.0 : r.top < 500 ? 1.2 : 0.7;
+                const widthBonus = r.width > 1100 ? 1.35 : 1;
+                out.push({
+                  url,
+                  kind,
+                  width:r.width,
+                  height:r.height,
+                  top:r.top,
+                  score:visibleArea * topBonus * widthBonus
+                });
+              };
+
+              for (const el of document.querySelectorAll("body *")) {
+                const bg = getComputedStyle(el).backgroundImage || "";
+                const matches = [...bg.matchAll(/url\((['"]?)(.*?)\1\)/g)];
+                for (const m of matches) add(m[2], el, "background");
+              }
+
+              for (const img of document.querySelectorAll("img")) {
+                add(img.currentSrc || img.src, img, "img");
+              }
+
+              for (const video of document.querySelectorAll("video")) {
+                add(video.poster, video, "video-poster");
+              }
+
+              out.sort((a,b)=>b.score-a.score);
+
+              const og = document.querySelector('meta[property="og:image"]')?.content;
+              if (og) out.push({url:og,kind:"og:image",width:0,height:0,top:0,score:1});
+
+              return out.slice(0,30);
+            });
+
+            let chosen = null;
+            let buffer = null;
+            let errors = [];
+
+            for (const c of candidates) {
+              try {
+                const absolute = new URL(c.url, page.url()).href;
+                const b = await downloadImage(absolute, target.url);
+                const meta = await sharp(b, {failOn:"none"}).metadata();
+                if ((meta.width || 0) < 800 || (meta.height || 0) < 350) {
+                  errors.push(`too small ${meta.width}x${meta.height}: ${absolute}`);
+                  continue;
+                }
+                chosen = {...c, url:absolute, intrinsicWidth:meta.width, intrinsicHeight:meta.height};
+                buffer = b;
+                break;
+              } catch (e) {
+                errors.push(String(e));
+              }
+            }
+
+            // Visit Mississippi currently uses a hero-video poster. Keep a factual fallback
+            // to the same poster if page markup changes before the extractor catches up.
+            if (!chosen && target.name === "visit-mississippi") {
+              const fallback = "https://visitmississippi.org/wp-content/uploads/2025/03/birthplace-cover-poster-scaled.jpg";
+              buffer = await downloadImage(fallback, target.url);
+              const meta = await sharp(buffer).metadata();
+              chosen = {
+                url:fallback,
+                kind:"known-video-poster",
+                intrinsicWidth:meta.width,
+                intrinsicHeight:meta.height,
+                score:0
+              };
+            }
+
+            if (!chosen || !buffer) {
+              throw new Error(`Could not resolve a clean hero image for ${target.url}. ${errors.slice(0,5).join(" | ")}`);
+            }
+
+            await sharp(buffer)
+              .rotate()
+              .resize({width:1800, withoutEnlargement:true})
+              .webp({quality:86, effort:5})
+              .toFile(target.out);
+
+            manifest[target.name] = {
+              page: target.url,
+              image: chosen.url,
+              kind: chosen.kind,
+              intrinsicWidth: chosen.intrinsicWidth,
+              intrinsicHeight: chosen.intrinsicHeight,
+              syncedAt: new Date().toISOString()
+            };
+
+            console.log(`${target.name}: ${chosen.kind} -> ${chosen.url}`);
+            await page.close();
+          }
+
+          await browser.close();
+          await fs.writeFile(
+            "study-mississippi/assets/external/source-manifest.json",
+            JSON.stringify(manifest, null, 2) + "\n",
+            "utf8"
+          );
+          EOF
+
+          cd /tmp/ms-hero-sync
+          node sync.mjs
+
+      - name: Commit refreshed hero media
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add study-mississippi/assets/external
+          if git diff --cached --quiet; then
+            echo "External hero media already current."
+            exit 0
+          fi
+          git commit -m "Refresh Mississippi resource hero images"
+          git push
