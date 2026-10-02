@@ -11,35 +11,35 @@
       "ratio": 3.2,
       "page": "https://www.alcorn.edu/marketing-and-communication/"
     },
-    "syncedAt": "2026-10-02T07:57:10.392Z"
+    "syncedAt": "2026-10-02T15:00:13.479Z"
   },
   "belhaven-university": {
     "name": "Belhaven University",
     "officialWebsite": "https://www.belhaven.edu/",
     "source": "user-approved logo",
     "pinned": true,
-    "syncedAt": "2026-10-02T07:57:10.403Z"
+    "syncedAt": "2026-10-02T15:00:13.487Z"
   },
   "blue-mountain-christian-university": {
     "name": "Blue Mountain Christian University",
     "officialWebsite": "https://www.bmc.edu/",
     "source": "user-approved logo",
     "pinned": true,
-    "syncedAt": "2026-10-02T07:57:10.403Z"
+    "syncedAt": "2026-10-02T15:00:13.487Z"
   },
   "delta-state-university": {
     "name": "Delta State University",
     "officialWebsite": "https://www.deltastate.edu/",
     "keptExisting": true,
     "rejected": [],
-    "syncedAt": "2026-10-02T07:57:14.620Z"
+    "syncedAt": "2026-10-02T15:00:17.792Z"
   },
   "jackson-state-university": {
     "name": "Jackson State University",
     "officialWebsite": "https://www.jsums.edu/",
     "source": "user-approved logo",
     "pinned": true,
-    "syncedAt": "2026-10-02T07:57:14.620Z"
+    "syncedAt": "2026-10-02T15:00:17.792Z"
   },
   "millsaps-college": {
     "name": "Millsaps College",
@@ -48,14 +48,14 @@
     "rejected": [
       "low entropy https://millsaps.edu/wp-content/uploads/2023/08/millsaps-logo-stacked.png"
     ],
-    "syncedAt": "2026-10-02T07:57:19.801Z"
+    "syncedAt": "2026-10-02T15:00:23.642Z"
   },
   "mississippi-state-university": {
     "name": "Mississippi State University",
     "officialWebsite": "https://www.msstate.edu/",
     "source": "user-approved logo",
     "pinned": true,
-    "syncedAt": "2026-10-02T07:57:19.801Z"
+    "syncedAt": "2026-10-02T15:00:23.642Z"
   },
   "mississippi-university-for-women": {
     "name": "Mississippi University for Women",
@@ -69,14 +69,14 @@
       "ratio": 1.347330398464838,
       "page": "https://www.muw.edu/ur/branding/logos-wordmarks/"
     },
-    "syncedAt": "2026-10-02T07:57:25.054Z"
+    "syncedAt": "2026-10-02T15:00:29.207Z"
   },
   "the-piney-woods-school": {
     "name": "The Piney Woods School",
     "officialWebsite": "https://www.pineywoods.org/",
     "keptExisting": true,
     "rejected": [],
-    "syncedAt": "2026-10-02T07:57:29.353Z"
+    "syncedAt": "2026-10-02T15:00:33.807Z"
   },
   "st-andrews-episcopal-school": {
     "name": "St. Andrew's Episcopal School",
@@ -90,7 +90,7 @@
       "ratio": 1,
       "page": "https://www.gosaints.org/"
     },
-    "syncedAt": "2026-10-02T07:57:34.285Z"
+    "syncedAt": "2026-10-02T15:00:38.891Z"
   },
   "tougaloo-college": {
     "name": "Tougaloo College",
@@ -104,7 +104,7 @@
       "ratio": 3.14921875,
       "page": "https://www.tougaloo.edu/about-tougaloo-college/communications"
     },
-    "syncedAt": "2026-10-02T07:57:43.735Z"
+    "syncedAt": "2026-10-02T15:00:48.415Z"
   },
   "university-of-mississippi": {
     "name": "University of Mississippi",
@@ -118,7 +118,7 @@
       "ratio": 1,
       "page": "https://olemiss.edu/marcomm/brand-services/"
     },
-    "syncedAt": "2026-10-02T07:57:54.344Z"
+    "syncedAt": "2026-10-02T15:00:59.881Z"
   },
   "the-university-of-southern-mississippi": {
     "name": "The University of Southern Mississippi",
@@ -132,20 +132,13 @@
       "ratio": 1.045421013805459,
       "page": "https://www.usm.edu/university-communications/university-logo.php"
     },
-    "syncedAt": "2026-10-02T07:57:59.542Z"
+    "syncedAt": "2026-10-02T15:01:05.300Z"
   },
   "william-carey-university": {
     "name": "William Carey University",
     "officialWebsite": "https://www.wmcarey.edu/",
-    "selected": {
-      "src": "https://www.wmcarey.edu/_assets/images/base/themeverse_footer.png",
-      "alt": "Footer logo",
-      "score": 4200,
-      "renderedWidth": 312.0201416015625,
-      "renderedHeight": 434.165771484375,
-      "ratio": 0.7186659154055207,
-      "page": "https://www.wmcarey.edu/external-relations/branding"
-    },
-    "syncedAt": "2026-10-02T07:58:09.789Z"
+    "source": "user-approved logo",
+    "pinned": true,
+    "syncedAt": "2026-10-02T15:01:05.306Z"
   }
 }
