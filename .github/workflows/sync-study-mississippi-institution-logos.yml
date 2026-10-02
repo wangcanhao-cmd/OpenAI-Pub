@@ -41,7 +41,6 @@ jobs:
           import { chromium } from "playwright";
           import sharp from "sharp";
           import fs from "node:fs/promises";
-          import { chromium } from "playwright";
 
           process.chdir(process.env.GITHUB_WORKSPACE);
 
@@ -189,6 +188,7 @@ jobs:
           import sharp from "sharp";
           import fs from "node:fs/promises";
           import { execFileSync } from "node:child_process";
+          import { chromium } from "playwright";
 
           process.chdir(process.env.GITHUB_WORKSPACE);
 
