@@ -140,7 +140,8 @@ jobs:
             "belhaven-university",
             "blue-mountain-christian-university",
             "mississippi-state-university",
-            "jackson-state-university"
+            "jackson-state-university",
+            "william-carey-university"
           ]);
 
           const keywordsFor = name => name.toLowerCase()
