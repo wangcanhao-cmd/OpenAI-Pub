@@ -1,0 +1,192 @@
+name: Sync Study Mississippi institution logos
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/sync-study-mississippi-institution-logos.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install browser and image tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/institution-logo-sync
+          cd /tmp/institution-logo-sync
+          npm init -y >/dev/null 2>&1
+          npm install playwright sharp >/dev/null 2>&1
+          npx playwright install --with-deps chromium >/dev/null 2>&1
+
+      - name: Capture official institution logos
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p study-mississippi/assets/institutions
+
+          cat > /tmp/institution-logo-sync/sync.mjs <<'EOF'
+          import { chromium } from "playwright";
+          import sharp from "sharp";
+          import fs from "node:fs/promises";
+
+          process.chdir(process.env.GITHUB_WORKSPACE);
+
+          const targets = [
+            ["alcorn-state-university","Alcorn State University","https://www.alcorn.edu/"],
+            ["belhaven-university","Belhaven University","https://www.belhaven.edu/"],
+            ["blue-mountain-christian-university","Blue Mountain Christian University","https://www.bmc.edu/"],
+            ["delta-state-university","Delta State University","https://www.deltastate.edu/"],
+            ["jackson-state-university","Jackson State University","https://www.jsums.edu/"],
+            ["meridian-community-college","Meridian Community College","https://meridiancc.edu/"],
+            ["millsaps-college","Millsaps College","https://millsaps.edu/"],
+            ["mississippi-christian-university","Mississippi Christian University","https://www.mc.edu/"],
+            ["mississippi-state-university","Mississippi State University","https://www.msstate.edu/"],
+            ["mississippi-university-for-women","Mississippi University for Women","https://www.muw.edu/"],
+            ["mississippi-valley-state-university","Mississippi Valley State University","https://www.mvsu.edu/"],
+            ["the-piney-woods-school","The Piney Woods School","https://www.pineywoods.org/"],
+            ["st-andrews-episcopal-school","St. Andrew's Episcopal School","https://www.gosaints.org/"],
+            ["tougaloo-college","Tougaloo College","https://www.tougaloo.edu/"],
+            ["university-of-mississippi","University of Mississippi","https://olemiss.edu/"],
+            ["the-university-of-southern-mississippi","The University of Southern Mississippi","https://www.usm.edu/"],
+            ["william-carey-university","William Carey University","https://www.wmcarey.edu/"]
+          ];
+
+          const browser = await chromium.launch({headless:true});
+          const manifest = {};
+
+          const keywordScore = (text, name) => {
+            const t = (text || "").toLowerCase();
+            const n = name.toLowerCase();
+            let s = 0;
+            if (/logo|wordmark|brand|site[-_ ]?logo/.test(t)) s += 1200;
+            if (n.split(/\s+/).filter(w=>w.length>4).some(w=>t.includes(w))) s += 500;
+            if (/header|navbar|masthead|branding/.test(t)) s += 300;
+            if (/footer/.test(t)) s -= 300;
+            if (/icon|social|search|menu|arrow|seal-only|athletic/.test(t)) s -= 250;
+            return s;
+          };
+
+          for (const [slug,name,url] of targets) {
+            const page = await browser.newPage({viewport:{width:1600,height:1000}, deviceScaleFactor:3});
+            console.log("Loading", name, url);
+
+            try {
+              await page.goto(url,{waitUntil:"domcontentloaded",timeout:90000});
+              await page.waitForTimeout(4500);
+
+              const candidates = await page.locator("img, svg").evaluateAll((els, name) => {
+                const out = [];
+                const norm = s => (s || "").toLowerCase();
+                const keywords = name.toLowerCase().split(/\s+/).filter(w=>w.length>4);
+
+                for (let i=0;i<els.length;i++) {
+                  const el = els[i];
+                  const r = el.getBoundingClientRect();
+                  const cs = getComputedStyle(el);
+                  if (r.width < 70 || r.height < 22 || r.width > 1100 || r.height > 450) continue;
+                  if (cs.display === "none" || cs.visibility === "hidden" || Number(cs.opacity||1) < .05) continue;
+                  if (r.bottom < 0 || r.top > 500) continue;
+
+                  const src = el.tagName === "IMG" ? (el.currentSrc || el.src || "") : "";
+                  const alt = el.getAttribute("alt") || "";
+                  const cls = typeof el.className === "string" ? el.className : (el.className?.baseVal || "");
+                  const id = el.id || "";
+                  const aria = el.getAttribute("aria-label") || "";
+                  const title = el.getAttribute("title") || "";
+                  const parentText = (el.closest("a,header,.header,.site-header,.navbar,.branding")?.textContent || "").slice(0,180);
+                  const text = norm([src,alt,cls,id,aria,title,parentText].join(" "));
+                  let score = 0;
+                  if (/logo|wordmark|brand|site[-_ ]?logo/.test(text)) score += 1200;
+                  if (keywords.some(w=>text.includes(w))) score += 500;
+                  if (/header|navbar|masthead|branding/.test(text)) score += 300;
+                  if (/footer/.test(text)) score -= 300;
+                  if (/icon|social|search|menu|arrow/.test(text)) score -= 250;
+                  score += Math.max(0,450-r.top) * 2;
+                  score += Math.min(500,r.width) + Math.min(180,r.height);
+                  if (r.width / Math.max(1,r.height) > 1.6) score += 150;
+
+                  out.push({index:i,score,tag:el.tagName,src,alt,cls,id,top:r.top,width:r.width,height:r.height});
+                }
+                return out.sort((a,b)=>b.score-a.score).slice(0,20);
+              }, name);
+
+              if (!candidates.length) throw new Error("No logo-like candidates found");
+
+              let saved = false;
+              const errs = [];
+
+              for (const c of candidates) {
+                try {
+                  const loc = page.locator("img, svg").nth(c.index);
+                  if (!(await loc.isVisible())) continue;
+                  const png = await loc.screenshot({type:"png"});
+                  const meta = await sharp(png).metadata();
+                  if ((meta.width||0) < 150 || (meta.height||0) < 40) continue;
+
+                  const out = `study-mississippi/assets/institutions/${slug}.webp`;
+                  await sharp(png)
+                    .flatten({background:"#ffffff"})
+                    .trim({background:"#ffffff",threshold:8})
+                    .resize({width:720,height:260,fit:"inside",withoutEnlargement:false})
+                    .webp({quality:92,effort:5})
+                    .toFile(out);
+
+                  manifest[slug] = {
+                    name,
+                    officialWebsite:url,
+                    sourceElement:c,
+                    syncedAt:new Date().toISOString()
+                  };
+                  console.log(`${name}: selected ${c.tag} ${c.alt || c.src || c.cls || c.id}`);
+                  saved = true;
+                  break;
+                } catch (e) {
+                  errs.push(String(e));
+                }
+              }
+
+              if (!saved) throw new Error("Could not capture logo: "+errs.slice(0,5).join(" | "));
+            } catch (e) {
+              console.error("FAILED", name, String(e));
+              manifest[slug] = {name,officialWebsite:url,error:String(e),syncedAt:new Date().toISOString()};
+            } finally {
+              await page.close();
+            }
+          }
+
+          await browser.close();
+          await fs.writeFile(
+            "study-mississippi/assets/institutions/source-manifest.json",
+            JSON.stringify(manifest,null,2)+"\n","utf8"
+          );
+          EOF
+
+          cd /tmp/institution-logo-sync
+          node sync.mjs
+
+      - name: Commit institution logos
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add study-mississippi/assets/institutions
+          if git diff --cached --quiet; then
+            echo "Institution logos already current."
+            exit 0
+          fi
+          git commit -m "Sync official institution logos"
+          git push
