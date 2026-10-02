@@ -79,13 +79,13 @@ jobs:
 
           # Render exact guide pages for the stacked/compact primary logos.
           pdftoppm -f 16 -singlefile -r 130 -png /tmp/logo-refresh/wcu.pdf \
-            study-mississippi/assets/institutions/brand-previews/wcu-primary-variations
+            "$GITHUB_WORKSPACE/study-mississippi/assets/institutions/brand-previews/wcu-primary-variations"
           if [ -s /tmp/logo-refresh/delta.pdf ]; then
             pdftoppm -f 1 -singlefile -r 130 -png /tmp/logo-refresh/delta.pdf \
-              study-mississippi/assets/institutions/brand-previews/delta-logo-guide
+              "$GITHUB_WORKSPACE/study-mississippi/assets/institutions/brand-previews/delta-logo-guide"
           fi
           pdftoppm -f 20 -singlefile -r 130 -png /tmp/logo-refresh/alcorn.pdf \
-            study-mississippi/assets/institutions/brand-previews/alcorn-primary-logos
+            "$GITHUB_WORKSPACE/study-mississippi/assets/institutions/brand-previews/alcorn-primary-logos"
 
       - name: Commit refreshed assets
         shell: bash
