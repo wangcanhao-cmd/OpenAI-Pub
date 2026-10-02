@@ -216,6 +216,13 @@ jobs:
           }
 
           // Official logo pages provide these exact current assets.
+          // Millsaps College: use the official stacked wordmark from the college website.
+          await saveImage(
+            "https://millsaps.edu/wp-content/uploads/2023/08/millsaps-logo-stacked.png",
+            "study-mississippi/assets/institutions/millsaps-college.webp",
+            "https://millsaps.edu/"
+          );
+
           await saveImage(
             "https://www.muw.edu/ur/wp-content/uploads/sites/57/2024/01/w-logo_horizontal_blue-1024x259.jpg",
             "study-mississippi/assets/institutions/mississippi-university-for-women.webp",
