@@ -138,7 +138,9 @@ jobs:
           const manifest = {};
           const pinnedUserApproved = new Set([
             "belhaven-university",
-            "blue-mountain-christian-university"
+            "blue-mountain-christian-university",
+            "mississippi-state-university",
+            "jackson-state-university"
           ]);
 
           const keywordsFor = name => name.toLowerCase()
