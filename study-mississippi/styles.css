@@ -47,19 +47,11 @@ button{font:inherit}
   color:#fff;
   overflow:hidden;
   background:
-    linear-gradient(90deg,
-      #071f3b 0%,
-      rgba(7,31,59,.98) 24%,
-      rgba(7,31,59,.90) 38%,
-      rgba(7,31,59,.68) 50%,
-      rgba(7,31,59,.30) 63%,
-      rgba(7,31,59,.08) 76%,
-      rgba(7,31,59,0) 88%),
-    url("https://tile.loc.gov/storage-services/service/pnp/highsm/36800/36826v.jpg") right center / auto 100% no-repeat,
+    url("assets/biloxi-lighthouse-hero.webp") center center / cover no-repeat,
     #071f3b;
 }
-.hero::after{content:"";position:absolute;inset:auto -80px -190px auto;width:520px;height:520px;border:70px solid rgba(244,178,35,.16);border-radius:50%}
-.hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,transparent 62%,rgba(7,31,59,.24))}
+.hero::after{display:none}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(7,31,59,.02) 55%,rgba(7,31,59,.18) 100%)}
 .hero-content{
   position:relative;
   z-index:2;
@@ -188,8 +180,8 @@ button{font:inherit}
   .main-nav{top:78px}
   .hero{
     min-height:560px;
-    background-position:right top;
-    background-size:auto 100%;
+    background-position:64% center;
+    background-size:cover;
   }
   .hero-content{padding:72px 0 85px}
   .hero h1{font-size:clamp(3.1rem,15vw,5rem)}
