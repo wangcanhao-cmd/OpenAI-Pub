@@ -279,7 +279,6 @@ jobs:
             JSON.stringify(manifest,null,2)+"\n","utf8"
           );
           EOF
-          EOF
 
           cd /tmp/institution-logo-sync
           node sync.mjs
