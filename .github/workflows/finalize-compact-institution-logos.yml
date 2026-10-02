@@ -1,0 +1,103 @@
+name: Finalize compact institution logos
+
+on:
+  push:
+    paths:
+      - ".github/workflows/finalize-compact-institution-logos.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node and browser
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/final-logo
+          cd /tmp/final-logo
+          npm init -y >/dev/null 2>&1
+          npm install sharp playwright >/dev/null 2>&1
+          npx playwright install --with-deps chromium >/dev/null 2>&1
+
+      - name: Crop official stacked logos and capture Delta header
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p study-mississippi/assets/institutions/brand-previews
+
+          cat > /tmp/final-logo/finalize.mjs <<'EOF'
+          import sharp from "sharp";
+          import { chromium } from "playwright";
+          import fs from "node:fs/promises";
+
+          process.chdir(process.env.GITHUB_WORKSPACE);
+
+          async function cropByFraction(src,out,box){
+            const image=sharp(src);
+            const m=await image.metadata();
+            const w=m.width,h=m.height;
+            if(!w||!h) throw new Error("Missing metadata for "+src);
+            const extract={
+              left:Math.max(0,Math.round(w*box.left)),
+              top:Math.max(0,Math.round(h*box.top)),
+              width:Math.min(w,Math.round(w*box.width)),
+              height:Math.min(h,Math.round(h*box.height))
+            };
+            if(extract.left+extract.width>w) extract.width=w-extract.left;
+            if(extract.top+extract.height>h) extract.height=h-extract.top;
+            await image
+              .extract(extract)
+              .flatten({background:"#ffffff"})
+              .trim({background:"#ffffff",threshold:10})
+              .resize({width:620,height:620,fit:"inside",withoutEnlargement:false})
+              .webp({quality:94,effort:5})
+              .toFile(out);
+          }
+
+          // Official 2026 WCU guide, page 16: use the narrow stacked Primary Logo.
+          await cropByFraction(
+            "study-mississippi/assets/institutions/brand-previews/wcu-primary-variations.png",
+            "study-mississippi/assets/institutions/william-carey-university.webp",
+            {left:.43,top:.39,width:.23,height:.25}
+          );
+
+          // Official 2025 Alcorn guide, page 20: use the stacked Primary Logo.
+          await cropByFraction(
+            "study-mississippi/assets/institutions/brand-previews/alcorn-primary-logos.png",
+            "study-mississippi/assets/institutions/alcorn-state-university.webp",
+            {left:.18,top:.12,width:.43,height:.40}
+          );
+
+          // Delta blocks direct PDF downloads, so inspect its live official website header.
+          const browser=await chromium.launch({headless:true});
+          const page=await browser.newPage({viewport:{width:1600,height:900},deviceScaleFactor:2});
+          await page.goto("https://www.deltastate.edu/",{waitUntil:"domcontentloaded",timeout:90000});
+          await page.waitForTimeout(6000);
+          await page.screenshot({
+            path:"study-mississippi/assets/institutions/brand-previews/delta-home-header.png",
+            type:"png",
+            clip:{x:0,y:0,width:1600,height:360}
+          });
+          await browser.close();
+          EOF
+
+          cd /tmp/final-logo
+          node finalize.mjs
+
+      - name: Commit finalized assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add study-mississippi/assets/institutions
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "Finalize compact institutional logo variants"
+          git push
