@@ -46,9 +46,16 @@ button{font:inherit}
   align-items:center;
   color:#fff;
   overflow:hidden;
-  background:
-    url("assets/biloxi-lighthouse-hero-20261002.webp") center top / cover no-repeat,
-    #071f3b;
+  background:#071f3b;
+}
+.hero::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:0;
+  background:url("assets/biloxi-lighthouse-hero-20261002.webp") center top / cover no-repeat;
+  transform:translateX(100px);
+  pointer-events:none;
 }
 .hero::after{display:none}
 .hero-overlay{
@@ -72,10 +79,10 @@ button{font:inherit}
 .hero-content{
   position:relative;
   z-index:2;
-  width:min(1240px,calc(100% - 32px));
+  width:min(1180px,calc(100% - 40px));
   margin:0 auto;
   padding:0;
-  transform:translateX(-100px);
+  transform:none;
 }
 .eyebrow,.section-kicker{display:inline-block;color:var(--red);font-size:.82rem;font-weight:900;letter-spacing:.16em;text-transform:uppercase}
 .eyebrow{color:var(--gold);margin-bottom:18px}
@@ -601,13 +608,14 @@ button{font:inherit}
   background-position:center top;
 }
 
-/* Hero copy responsive offset */
+
+/* Hero background image shift */
 @media(max-width:1280px){
-  .hero-content{transform:translateX(-60px)}
+  .hero::before{transform:translateX(70px)}
 }
 @media(max-width:900px){
-  .hero-content{transform:translateX(-24px)}
+  .hero::before{transform:translateX(40px)}
 }
 @media(max-width:700px){
-  .hero-content{transform:none}
+  .hero::before{transform:translateX(20px)}
 }
