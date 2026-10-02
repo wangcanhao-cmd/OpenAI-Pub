@@ -212,7 +212,7 @@ document.querySelectorAll('.site-footer .footer-brand img').forEach(img => {
 
 /* Global stylesheet cache version */
 (() => {
-  const version = "20261002-member-institutions-merged";
+  const version = "20261002-member-logo-left";
   document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
     const href = link.getAttribute("href") || "";
     if (/^styles\.css(?:\?|$)/.test(href)) {
