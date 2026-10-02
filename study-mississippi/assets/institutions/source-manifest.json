@@ -2,44 +2,32 @@
   "alcorn-state-university": {
     "name": "Alcorn State University",
     "officialWebsite": "https://www.alcorn.edu/",
-    "selected": {
-      "src": "https://www.alcorn.edu/wp-content/uploads/2021/05/footerlogo.png",
-      "alt": "Alcorn State University Logo",
-      "score": 2000,
-      "renderedWidth": 144,
-      "renderedHeight": 45,
-      "ratio": 3.2,
-      "page": "https://www.alcorn.edu/marketing-and-communication/"
-    },
-    "syncedAt": "2026-10-02T15:00:13.479Z"
+    "source": "user-approved logo",
+    "pinned": true
   },
   "belhaven-university": {
     "name": "Belhaven University",
     "officialWebsite": "https://www.belhaven.edu/",
     "source": "user-approved logo",
-    "pinned": true,
-    "syncedAt": "2026-10-02T15:00:13.487Z"
+    "pinned": true
   },
   "blue-mountain-christian-university": {
     "name": "Blue Mountain Christian University",
     "officialWebsite": "https://www.bmc.edu/",
     "source": "user-approved logo",
-    "pinned": true,
-    "syncedAt": "2026-10-02T15:00:13.487Z"
+    "pinned": true
   },
   "delta-state-university": {
     "name": "Delta State University",
     "officialWebsite": "https://www.deltastate.edu/",
-    "keptExisting": true,
-    "rejected": [],
-    "syncedAt": "2026-10-02T15:00:17.792Z"
+    "source": "user-approved logo",
+    "pinned": true
   },
   "jackson-state-university": {
     "name": "Jackson State University",
     "officialWebsite": "https://www.jsums.edu/",
     "source": "user-approved logo",
-    "pinned": true,
-    "syncedAt": "2026-10-02T15:00:17.792Z"
+    "pinned": true
   },
   "millsaps-college": {
     "name": "Millsaps College",
@@ -54,8 +42,7 @@
     "name": "Mississippi State University",
     "officialWebsite": "https://www.msstate.edu/",
     "source": "user-approved logo",
-    "pinned": true,
-    "syncedAt": "2026-10-02T15:00:23.642Z"
+    "pinned": true
   },
   "mississippi-university-for-women": {
     "name": "Mississippi University for Women",
@@ -123,22 +110,31 @@
   "the-university-of-southern-mississippi": {
     "name": "The University of Southern Mississippi",
     "officialWebsite": "https://www.usm.edu/",
-    "selected": {
-      "src": "https://www.usm.edu/university-communications/_images/univv123pc.png",
-      "alt": "Vertical logo for The University of Southern Mississippi",
-      "score": 6350,
-      "renderedWidth": 155,
-      "renderedHeight": 148.265625,
-      "ratio": 1.045421013805459,
-      "page": "https://www.usm.edu/university-communications/university-logo.php"
-    },
-    "syncedAt": "2026-10-02T15:01:05.300Z"
+    "source": "user-approved logo",
+    "pinned": true
   },
   "william-carey-university": {
     "name": "William Carey University",
     "officialWebsite": "https://www.wmcarey.edu/",
     "source": "user-approved logo",
-    "pinned": true,
-    "syncedAt": "2026-10-02T15:01:05.306Z"
+    "pinned": true
+  },
+  "meridian-community-college": {
+    "name": "Meridian Community College",
+    "officialWebsite": "https://meridiancc.edu/",
+    "source": "user-approved logo",
+    "pinned": true
+  },
+  "mississippi-christian-university": {
+    "name": "Mississippi Christian University",
+    "officialWebsite": "https://www.mc.edu/",
+    "source": "user-approved logo",
+    "pinned": true
+  },
+  "mississippi-valley-state-university": {
+    "name": "Mississippi Valley State University",
+    "officialWebsite": "https://www.mvsu.edu/",
+    "source": "user-approved logo",
+    "pinned": true
   }
 }
