@@ -21,14 +21,6 @@ jobs:
           curl -L --fail --retry 3 -A "Mozilla/5.0" \
             "https://www.belhaven.edu/_images/logos/BU%20Primary%20Logos/BU%20Lettermark_Column/bu_lettermark_column_rgb.png" \
             -o /tmp/belhaven-logo/logo.png
-          python3 - <<'PY'
-          from PIL import Image
-          im=Image.open('/tmp/belhaven-logo/logo.png').convert('RGBA')
-          bg=Image.new('RGBA',im.size,'white')
-          bg.alpha_composite(im)
-          bg.convert('RGB').save('/tmp/belhaven-logo/logo-flat.png')
-          PY
-          python3 -m pip install --quiet pillow
         continue-on-error: false
 
       - name: Convert and commit
