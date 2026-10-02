@@ -748,3 +748,62 @@ button{font:inherit}
     font-size:.88rem;
   }
 }
+
+
+/* Current StudyMississippi member institution directory */
+.current-member-grid{
+  align-items:stretch;
+}
+.current-member{
+  display:grid;
+  grid-template-rows:96px 1fr;
+  gap:14px;
+  min-height:225px;
+  padding:22px;
+}
+.current-member-logo-wrap{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:96px;
+  padding:6px 10px;
+  border-radius:12px;
+  background:#fff;
+}
+.current-member-logo{
+  display:block;
+  width:100%;
+  height:82px;
+  object-fit:contain;
+  object-position:center;
+}
+.current-member-copy{
+  display:flex;
+  flex-direction:column;
+  min-width:0;
+}
+.current-member-copy h3{
+  margin:0 0 6px;
+}
+.current-member-copy p{
+  margin:0;
+}
+.current-member-copy span{
+  margin-top:auto;
+  padding-top:14px;
+}
+@media(max-width:700px){
+  .current-member{
+    grid-template-columns:110px minmax(0,1fr);
+    grid-template-rows:auto;
+    align-items:center;
+    min-height:0;
+  }
+  .current-member-logo-wrap{
+    min-height:82px;
+    padding:4px;
+  }
+  .current-member-logo{
+    height:72px;
+  }
+}
