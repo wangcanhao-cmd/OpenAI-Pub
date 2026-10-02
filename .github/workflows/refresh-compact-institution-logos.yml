@@ -52,7 +52,7 @@ jobs:
             -o /tmp/logo-refresh/wcu.pdf
           curl -L --fail --retry 3 -A "Mozilla/5.0" \
             "https://www.deltastate.edu/docs/univ_relations/Logo%20choosing%20guide.pdf" \
-            -o /tmp/logo-refresh/delta.pdf
+            -o /tmp/logo-refresh/delta.pdf || true
           curl -L --fail --retry 3 -A "Mozilla/5.0" \
             "https://www.alcorn.edu/wp-content/uploads/2025/07/Alcorn-Style-Guide-2025.pdf" \
             -o /tmp/logo-refresh/alcorn.pdf
@@ -80,8 +80,10 @@ jobs:
           # Render exact guide pages for the stacked/compact primary logos.
           pdftoppm -f 16 -singlefile -r 130 -png /tmp/logo-refresh/wcu.pdf \
             study-mississippi/assets/institutions/brand-previews/wcu-primary-variations
-          pdftoppm -f 1 -singlefile -r 130 -png /tmp/logo-refresh/delta.pdf \
-            study-mississippi/assets/institutions/brand-previews/delta-logo-guide
+          if [ -s /tmp/logo-refresh/delta.pdf ]; then
+            pdftoppm -f 1 -singlefile -r 130 -png /tmp/logo-refresh/delta.pdf \
+              study-mississippi/assets/institutions/brand-previews/delta-logo-guide
+          fi
           pdftoppm -f 20 -singlefile -r 130 -png /tmp/logo-refresh/alcorn.pdf \
             study-mississippi/assets/institutions/brand-previews/alcorn-primary-logos
 
