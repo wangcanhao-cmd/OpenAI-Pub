@@ -620,9 +620,14 @@ button{font:inherit}
 }
 
 
-/* 2026-10-02 desktop alignment: move site content left and align header to viewport edge */
+/* 2026-10-02 desktop alignment: shift title areas only; keep page content centered */
 @media(min-width:1281px){
   main .container{
+    transform:none;
+  }
+
+  .hero-content,
+  .page-hero .container{
     transform:translateX(-150px);
   }
 
@@ -644,7 +649,9 @@ button{font:inherit}
 
 /* Keep narrower screens readable and unclipped. */
 @media(max-width:1280px){
-  main .container{
+  main .container,
+  .hero-content,
+  .page-hero .container{
     transform:none;
   }
 }
