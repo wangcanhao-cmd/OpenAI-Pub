@@ -49,14 +49,8 @@ jobs:
             ["belhaven-university","Belhaven University","https://www.belhaven.edu/"],
             ["blue-mountain-christian-university","Blue Mountain Christian University","https://www.bmc.edu/"],
             ["delta-state-university","Delta State University","https://www.deltastate.edu/"],
-            ["jackson-state-university","Jackson State University","https://www.jsums.edu/"],
-            ["meridian-community-college","Meridian Community College","https://meridiancc.edu/"],
-            ["millsaps-college","Millsaps College","https://millsaps.edu/"],
-            ["mississippi-christian-university","Mississippi Christian University","https://www.mc.edu/"],
-            ["mississippi-state-university","Mississippi State University","https://www.msstate.edu/"],
-            ["mississippi-university-for-women","Mississippi University for Women","https://www.muw.edu/"],
-            ["mississippi-valley-state-university","Mississippi Valley State University","https://www.mvsu.edu/"],
-            ["the-piney-woods-school","The Piney Woods School","https://www.pineywoods.org/"],
+            ["jackson-state-university","Jackson State University","https://www.jsums.edu/"],            ["millsaps-college","Millsaps College","https://millsaps.edu/"],            ["mississippi-state-university","Mississippi State University","https://www.msstate.edu/"],
+            ["mississippi-university-for-women","Mississippi University for Women","https://www.muw.edu/"],            ["the-piney-woods-school","The Piney Woods School","https://www.pineywoods.org/"],
             ["st-andrews-episcopal-school","St. Andrew's Episcopal School","https://www.gosaints.org/"],
             ["tougaloo-college","Tougaloo College","https://www.tougaloo.edu/"],
             ["university-of-mississippi","University of Mississippi","https://olemiss.edu/"],
@@ -98,7 +92,7 @@ jobs:
                   const cs = getComputedStyle(el);
                   if (r.width < 70 || r.height < 22 || r.width > 1100 || r.height > 450) continue;
                   if (cs.display === "none" || cs.visibility === "hidden" || Number(cs.opacity||1) < .05) continue;
-                  if (r.bottom < 0 || r.top > 500) continue;
+                  if (r.width < 1 || r.height < 1) continue;
 
                   const src = el.tagName === "IMG" ? (el.currentSrc || el.src || "") : "";
                   const alt = el.getAttribute("alt") || "";
@@ -109,14 +103,20 @@ jobs:
                   const parentText = (el.closest("a,header,.header,.site-header,.navbar,.branding")?.textContent || "").slice(0,180);
                   const text = norm([src,alt,cls,id,aria,title,parentText].join(" "));
                   let score = 0;
-                  if (/logo|wordmark|brand|site[-_ ]?logo/.test(text)) score += 1200;
+                  const ratio = r.width / Math.max(1,r.height);
+                  if (/logo|brand|site[-_ ]?logo|mark|emblem|crest|seal|monogram/.test(text)) score += 1200;
+                  if (/stacked|vertical|compact|mark|emblem|crest|monogram/.test(text)) score += 950;
+                  if (/seal/.test(text)) score += 450;
                   if (keywords.some(w=>text.includes(w))) score += 500;
-                  if (/header|navbar|masthead|branding/.test(text)) score += 300;
-                  if (/footer/.test(text)) score -= 300;
-                  if (/icon|social|search|menu|arrow/.test(text)) score -= 250;
-                  score += Math.max(0,450-r.top) * 2;
-                  score += Math.min(500,r.width) + Math.min(180,r.height);
-                  if (r.width / Math.max(1,r.height) > 1.6) score += 150;
+                  if (ratio >= .72 && ratio <= 1.38) score += 1500;
+                  else if (ratio >= .52 && ratio <= 1.75) score += 900;
+                  else if (ratio >= .42 && ratio <= 2.1) score += 350;
+                  else if (ratio > 2.4) score -= 1100;
+                  if (/wordmark|horizontal|header[-_ ]?logo/.test(text)) score -= 350;
+                  if (/athletic|sports|mascot/.test(text)) score -= 800;
+                  if (/icon|social|search|menu|arrow/.test(text)) score -= 700;
+                  if (/footer/.test(text)) score -= 150;
+                  score += Math.min(280,r.width) + Math.min(180,r.height);
 
                   out.push({index:i,score,tag:el.tagName,src,alt,cls,id,top:r.top,width:r.width,height:r.height});
                 }
@@ -234,21 +234,6 @@ jobs:
             "https://www.usm.edu/university-communications/university-logo.php"
           );
 
-          // MVSU: official style guide page 7 shows the preferred horizontal university signature.
-          const mvsuPdf="/tmp/mvsu-styleguide.pdf";
-          await fs.writeFile(mvsuPdf,await fetchBuffer(
-            "https://www.mvsu.edu/sites/default/files/mvsu_styleguide.pdf",
-            "https://www.mvsu.edu/mvsu-style-guide"
-          ));
-          execFileSync("pdftoppm",["-f","7","-singlefile","-r","200","-png",mvsuPdf,"/tmp/mvsu-page"]);
-          await sharp("/tmp/mvsu-page.png")
-            .extract({left:250,top:420,width:900,height:280})
-            .flatten({background:"#ffffff"})
-            .trim({background:"#ffffff",threshold:10})
-            .resize({width:720,height:260,fit:"inside",withoutEnlargement:false})
-            .webp({quality:92,effort:5})
-            .toFile("study-mississippi/assets/institutions/mississippi-valley-state-university.webp");
-
           // Delta State: capture the official logo asset rendered in the university header.
           const browser=await chromium.launch({headless:true});
           const page=await browser.newPage({viewport:{width:1600,height:1000},deviceScaleFactor:3});
@@ -314,7 +299,7 @@ jobs:
           await browser.close();
           if(!deltaSaved) throw new Error("Could not capture Delta State official header logo");
 
-          console.log("Corrected MUW, USM, MVSU, and Delta State logos from official brand resources.");
+          console.log("Corrected MUW, USM, and Delta State logos from official brand resources; pinned compact logos are preserved.");
 
           EOF
 
