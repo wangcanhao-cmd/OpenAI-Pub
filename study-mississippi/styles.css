@@ -47,7 +47,7 @@ button{font:inherit}
   color:#fff;
   overflow:hidden;
   background:
-    url("assets/biloxi-lighthouse-hero.webp") center top / cover no-repeat,
+    url("assets/biloxi-lighthouse-hero-20261002.webp") center top / cover no-repeat,
     #071f3b;
 }
 .hero::after{display:none}
