@@ -63,27 +63,31 @@ jobs:
           await cropByFraction(
             "study-mississippi/assets/institutions/brand-previews/wcu-primary-variations.png",
             "study-mississippi/assets/institutions/william-carey-university.webp",
-            {left:.43,top:.39,width:.23,height:.25}
+            {left:.39,top:.40,width:.23,height:.18}
           );
 
           // Official 2025 Alcorn guide, page 20: use the stacked Primary Logo.
           await cropByFraction(
             "study-mississippi/assets/institutions/brand-previews/alcorn-primary-logos.png",
             "study-mississippi/assets/institutions/alcorn-state-university.webp",
-            {left:.18,top:.12,width:.43,height:.40}
+            {left:.18,top:.13,width:.43,height:.29}
           );
 
-          // Delta blocks direct PDF downloads, so inspect its live official website header.
-          const browser=await chromium.launch({headless:true});
-          const page=await browser.newPage({viewport:{width:1600,height:900},deviceScaleFactor:2});
-          await page.goto("https://www.deltastate.edu/",{waitUntil:"domcontentloaded",timeout:90000});
-          await page.waitForTimeout(6000);
-          await page.screenshot({
-            path:"study-mississippi/assets/institutions/brand-previews/delta-home-header.png",
-            type:"png",
-            clip:{x:0,y:0,width:1600,height:360}
-          });
-          await browser.close();
+          // Delta's official site blocks automated asset retrieval with a bot challenge.
+          // Use the institutional logo image served by the Tennessee higher-ed directory;
+          // Delta's official identity guide is used to verify the mark and proportions.
+          const deltaUrl="https://tnreconnect.gov/logo/175616deltalogo195b72.PNG";
+          const deltaRes=await fetch(deltaUrl,{headers:{"user-agent":"Mozilla/5.0"}});
+          if(!deltaRes.ok) throw new Error("Delta logo fetch failed: "+deltaRes.status);
+          const deltaBuf=Buffer.from(await deltaRes.arrayBuffer());
+          await sharp(deltaBuf,{failOn:"none"})
+            .flatten({background:"#ffffff"})
+            .trim({background:"#ffffff",threshold:8})
+            .resize({width:620,height:620,fit:"inside",withoutEnlargement:false})
+            .webp({quality:94,effort:5})
+            .toFile("study-mississippi/assets/institutions/delta-state-university.webp");
+
+          try{await fs.rm("study-mississippi/assets/institutions/brand-previews/delta-home-header.png");}catch{}
           EOF
 
           cd /tmp/final-logo
