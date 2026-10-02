@@ -47,7 +47,7 @@ button{font:inherit}
   color:#fff;
   overflow:hidden;
   background:
-    url("assets/biloxi-lighthouse-hero.webp") center center / cover no-repeat,
+    url("assets/biloxi-lighthouse-hero.webp") center top / cover no-repeat,
     #071f3b;
 }
 .hero::after{display:none}
@@ -180,7 +180,7 @@ button{font:inherit}
   .main-nav{top:78px}
   .hero{
     min-height:560px;
-    background-position:64% center;
+    background-position:64% top;
     background-size:cover;
   }
   .hero-content{padding:72px 0 85px}
