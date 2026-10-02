@@ -136,6 +136,10 @@ jobs:
 
           const browser = await chromium.launch({headless:true});
           const manifest = {};
+          const pinnedUserApproved = new Set([
+            "belhaven-university",
+            "blue-mountain-christian-university"
+          ]);
 
           const keywordsFor = name => name.toLowerCase()
             .replace(/[’']/g,"")
@@ -143,6 +147,17 @@ jobs:
             .filter(w => w.length >= 5 && !["university","college","school","state","southern","mississippi"].includes(w));
 
           for (const target of targets) {
+            if (pinnedUserApproved.has(target.slug)) {
+              manifest[target.slug] = {
+                name:target.name,
+                officialWebsite:target.home,
+                source:"user-approved logo",
+                pinned:true,
+                syncedAt:new Date().toISOString()
+              };
+              console.log("PINNED", target.name);
+              continue;
+            }
             const candidates = [];
             const keys = keywordsFor(target.name);
             console.log("\n==", target.name, "==");
