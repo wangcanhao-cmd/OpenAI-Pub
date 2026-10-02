@@ -3,65 +3,65 @@
     "name": "Alcorn State University",
     "officialWebsite": "https://www.alcorn.edu/",
     "sourceElement": {
-      "index": 0,
-      "score": 2507,
+      "index": 10,
+      "score": 3060,
       "tag": "IMG",
-      "src": "https://www.alcorn.edu/wp-content/uploads/2021/05/footerlogo.png",
-      "alt": "Alcorn State University Logo",
-      "cls": "fusion-standard-logo",
+      "src": "https://www.alcorn.edu/wp-content/uploads/2026/09/155-web-thumbnail-700x441.png",
+      "alt": "Alcorn State University 155th anniversary logo, est. 1871.",
+      "cls": "attachment-recent-posts size-recent-posts",
       "id": "",
-      "top": 66,
-      "width": 144,
-      "height": 45
+      "top": 2529.9375,
+      "width": 380.03125,
+      "height": 239.40625
     },
-    "syncedAt": "2026-10-02T04:42:13.193Z"
+    "syncedAt": "2026-10-02T05:10:59.939Z"
   },
   "belhaven-university": {
     "name": "Belhaven University",
     "officialWebsite": "https://www.belhaven.edu/",
     "sourceElement": {
-      "index": 1,
-      "score": 3015.671875,
+      "index": 44,
+      "score": 3500,
       "tag": "IMG",
-      "src": "https://www.belhaven.edu/_files/images/BelhavenLogoWhite.svg",
-      "alt": "Belhaven University logo",
+      "src": "https://www.belhaven.edu/_images/accolades/cod-2023-24.webp",
+      "alt": "College of Distinction logo",
       "cls": "",
       "id": "",
-      "top": 51.71875,
-      "width": 343.109375,
-      "height": 26
+      "top": 3544.28125,
+      "width": 150,
+      "height": 150
     },
-    "syncedAt": "2026-10-02T04:42:18.888Z"
+    "syncedAt": "2026-10-02T05:11:05.829Z"
   },
   "blue-mountain-christian-university": {
     "name": "Blue Mountain Christian University",
     "officialWebsite": "https://www.bmc.edu/",
     "sourceElement": {
-      "index": 4,
-      "score": 2548.3125,
+      "index": 128,
+      "score": 4512.421875,
       "tag": "IMG",
-      "src": "https://irp.cdn-website.com/c5f03851/dms3rep/multi/opt/2022+Logo+Final+Dark+Background-01-1920w.png",
+      "src": "https://irp.cdn-website.com/c5f03851/dms3rep/multi/opt/Blue-Mountain-College-mark-only%28dark-backgrounds%29-1920w.png",
       "alt": "",
-      "cls": "navLogo primary-image",
-      "id": "navLogo",
-      "top": 0,
-      "width": 193,
-      "height": 105.3125
+      "cls": "",
+      "id": "1685609716",
+      "top": 7337.046875,
+      "width": 182.421875,
+      "height": 194.296875
     },
-    "syncedAt": "2026-10-02T04:42:25.214Z"
+    "syncedAt": "2026-10-02T05:11:12.482Z"
   },
   "delta-state-university": {
     "name": "Delta State University",
     "officialWebsite": "https://www.deltastate.edu/",
     "error": "Error: No logo-like candidates found",
-    "syncedAt": "2026-10-02T04:42:29.957Z"
+    "syncedAt": "2026-10-02T05:11:17.452Z"
   },
   "jackson-state-university": {
     "name": "Jackson State University",
     "officialWebsite": "https://www.jsums.edu/",
     "sourceElement": {
       "index": 1,
-      "score": 2286.9375,
+      "score": 335.9375,
       "tag": "IMG",
       "src": "https://www.jsums.edu/wp-content/uploads/2022/07/2logo.png",
       "alt": "11JSU Logo",
@@ -71,31 +71,14 @@
       "width": 180,
       "height": 55.9375
     },
-    "syncedAt": "2026-10-02T04:42:35.093Z"
-  },
-  "meridian-community-college": {
-    "name": "Meridian Community College",
-    "officialWebsite": "https://meridiancc.edu/",
-    "sourceElement": {
-      "index": 0,
-      "score": 3148,
-      "tag": "IMG",
-      "src": "https://meridiancc.edu/_resources/img/logos/logo.png",
-      "alt": "Meridian Community College",
-      "cls": "d-none d-lg-block",
-      "id": "",
-      "top": 20,
-      "width": 336,
-      "height": 102
-    },
-    "syncedAt": "2026-10-02T04:42:41.221Z"
+    "syncedAt": "2026-10-02T05:11:22.700Z"
   },
   "millsaps-college": {
     "name": "Millsaps College",
     "officialWebsite": "https://millsaps.edu/",
     "sourceElement": {
       "index": 7,
-      "score": 2435.40625,
+      "score": 2925.59375,
       "tag": "IMG",
       "src": "https://millsaps.edu/wp-content/uploads/2023/08/millsaps-logo-stacked.png",
       "alt": "Millsaps College homepage",
@@ -105,71 +88,48 @@
       "width": 187.484375,
       "height": 88.109375
     },
-    "syncedAt": "2026-10-02T04:42:47.023Z"
-  },
-  "mississippi-christian-university": {
-    "name": "Mississippi Christian University",
-    "officialWebsite": "https://www.mc.edu/",
-    "sourceElement": {
-      "index": 3,
-      "score": 1805.03125,
-      "tag": "IMG",
-      "src": "https://mississippicollege-1ba9f.kxcdn.com/packages/mississippi_college/themes/mississippi_college_v2022/images/MSChristian-white.svg",
-      "alt": "Mississippi Christian University",
-      "cls": "",
-      "id": "",
-      "top": 20,
-      "width": 230,
-      "height": 65.03125
-    },
-    "syncedAt": "2026-10-02T04:42:52.452Z"
+    "syncedAt": "2026-10-02T05:11:29.281Z"
   },
   "mississippi-state-university": {
     "name": "Mississippi State University",
     "officialWebsite": "https://www.msstate.edu/",
     "sourceElement": {
-      "index": 0,
-      "score": 3196.046875,
+      "index": 1,
+      "score": 2816.75,
       "tag": "IMG",
-      "src": "https://cdn01.its.msstate.edu/i/logos/msstate/HORIZONTAL_WEB_white_maroon_m.svg",
-      "alt": "Logo for Mississippi State University",
+      "src": "https://cdn01.its.msstate.edu/i/logos/msstate/SQUARE_WEB_maroon.svg",
+      "alt": "decorative",
       "cls": "",
       "id": "",
-      "top": 30,
-      "width": 424.953125,
-      "height": 81.09375
+      "top": 918.625,
+      "width": 130,
+      "height": 86.75
     },
-    "syncedAt": "2026-10-02T04:42:57.877Z"
+    "syncedAt": "2026-10-02T05:11:36.259Z"
   },
   "mississippi-university-for-women": {
     "name": "Mississippi University for Women",
     "officialWebsite": "https://www.muw.edu/",
     "sourceElement": {
-      "index": 4,
-      "score": 2350.703125,
+      "index": 19,
+      "score": 3145.59375,
       "tag": "IMG",
-      "src": "https://www.muw.edu/wp-content/uploads/2025/01/BeBoldLogo.png",
-      "alt": "Be Bold.",
-      "cls": "wp-image-33294",
+      "src": "https://www.muw.edu/wp-content/uploads/2022/05/SACSCOC_footer.png",
+      "alt": "Southern Association of Colleges and Schools Commission on Colleges Accredited Institution Seal",
+      "cls": "",
       "id": "",
-      "top": 261.796875,
-      "width": 750,
-      "height": 124.296875
+      "top": 5155.671875,
+      "width": 72.796875,
+      "height": 72.796875
     },
-    "syncedAt": "2026-10-02T04:43:04.684Z"
-  },
-  "mississippi-valley-state-university": {
-    "name": "Mississippi Valley State University",
-    "officialWebsite": "https://www.mvsu.edu/",
-    "error": "Error: No logo-like candidates found",
-    "syncedAt": "2026-10-02T04:43:10.493Z"
+    "syncedAt": "2026-10-02T05:11:42.697Z"
   },
   "the-piney-woods-school": {
     "name": "The Piney Woods School",
     "officialWebsite": "https://www.pineywoods.org/",
     "sourceElement": {
       "index": 1,
-      "score": 2460,
+      "score": 2308,
       "tag": "IMG",
       "src": "https://static.wixstatic.com/media/cc4e8f_fd9dea71921e4d23803e23d7369708bd~mv2.jpg/v1/fill/w_260,h_156,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/updatedvwider%20box%20BW%20logo%20JPG%20_edited_jp.jpg",
       "alt": "updatedvwider box BW logo JPG _edited.jp",
@@ -179,80 +139,91 @@
       "width": 130,
       "height": 78
     },
-    "syncedAt": "2026-10-02T04:43:15.505Z"
+    "syncedAt": "2026-10-02T05:11:48.031Z"
   },
   "st-andrews-episcopal-school": {
     "name": "St. Andrew's Episcopal School",
     "officialWebsite": "https://www.gosaints.org/",
     "sourceElement": {
-      "index": 0,
-      "score": 2909.828125,
+      "index": 36,
+      "score": 3915.421875,
       "tag": "IMG",
-      "src": "https://bbk12e1-cdn.myschoolcdn.com/ftpimages/968/logo/White%20HOZ%20Home%20Page.png",
+      "src": "https://bbk12e1-cdn.myschoolcdn.com/ftpimages/968/logo/2021-ST-ANDREWS-seal-footer.png",
       "alt": "St. Andrews Episcopal School",
       "cls": "",
       "id": "",
-      "top": 64,
-      "width": 229.953125,
-      "height": 57.875
+      "top": 7065.59375,
+      "width": 235.421875,
+      "height": 235.421875
     },
-    "syncedAt": "2026-10-02T04:43:20.769Z"
+    "syncedAt": "2026-10-02T05:11:53.804Z"
   },
   "tougaloo-college": {
     "name": "Tougaloo College",
     "officialWebsite": "https://www.tougaloo.edu/",
     "sourceElement": {
-      "index": 1,
-      "score": 2987.703125,
+      "index": 7,
+      "score": 1310,
       "tag": "IMG",
-      "src": "https://www.tougaloo.edu/sites/default/files/2025-09/streched%20logo.png",
-      "alt": "Tougaloo College",
+      "src": "https://www.tougaloo.edu/sites/default/files/2025-11/IMG_9497.jpg",
+      "alt": "Aunjanue Ellis-Taylor Hosts 'The Convocation: A Gathering of Black Women Artists' at Tougaloo College",
       "cls": "",
       "id": "",
-      "top": 16,
-      "width": 204.703125,
-      "height": 65
+      "top": 2941.125,
+      "width": 318,
+      "height": 180
     },
-    "syncedAt": "2026-10-02T04:43:44.272Z"
+    "syncedAt": "2026-10-02T05:12:00.168Z"
   },
   "university-of-mississippi": {
     "name": "University of Mississippi",
     "officialWebsite": "https://olemiss.edu/",
     "sourceElement": {
-      "index": 0,
-      "score": 1758,
+      "index": 20,
+      "score": 1960,
       "tag": "IMG",
-      "src": "https://marvel-b1-cdn.bc0a.com/f00000000246364/olemiss.edu/assets/images/new-lockup.webp",
-      "alt": "University of Mississippi homepage",
+      "src": "https://marvel-b1-cdn.bc0a.com/f00000000246364/olemiss.edu/assets/images/parisyates.jpg",
+      "alt": "paris yates chapel",
       "cls": "",
       "id": "",
-      "top": 31,
-      "width": 208,
-      "height": 62
+      "top": 2850.703125,
+      "width": 320,
+      "height": 320
     },
-    "syncedAt": "2026-10-02T04:43:51.362Z"
+    "syncedAt": "2026-10-02T05:12:06.703Z"
   },
   "the-university-of-southern-mississippi": {
     "name": "The University of Southern Mississippi",
     "officialWebsite": "https://www.usm.edu/",
-    "error": "Error: No logo-like candidates found",
-    "syncedAt": "2026-10-02T04:43:57.206Z"
+    "sourceElement": {
+      "index": 6,
+      "score": 1960,
+      "tag": "IMG",
+      "src": "https://www.usm.edu/news/2025/_images/asbury-hall-thumbnail.jpg",
+      "alt": "Asbury Hall",
+      "cls": "",
+      "id": "",
+      "top": 1172.203125,
+      "width": 416,
+      "height": 312
+    },
+    "syncedAt": "2026-10-02T05:12:12.801Z"
   },
   "william-carey-university": {
     "name": "William Carey University",
     "officialWebsite": "https://www.wmcarey.edu/",
     "sourceElement": {
-      "index": 0,
-      "score": 2997,
+      "index": 7,
+      "score": 3510,
       "tag": "IMG",
-      "src": "https://www.wmcarey.edu/_files/t21/img/logos/logo_white.png",
-      "alt": "WCU Logo serving as link to homepage",
-      "cls": "img-fluid",
+      "src": "https://www.wmcarey.edu/news/2025/_images/red-seal-thumbnail.png",
+      "alt": "",
+      "cls": "img-fluid img-thumbnail img-thumbnail-no-borders rounded-0",
       "id": "",
-      "top": 70,
-      "width": 300,
-      "height": 87
+      "top": 3813.296875,
+      "width": 635.984375,
+      "height": 424.296875
     },
-    "syncedAt": "2026-10-02T04:44:03.369Z"
+    "syncedAt": "2026-10-02T05:12:18.952Z"
   }
 }
