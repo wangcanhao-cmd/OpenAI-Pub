@@ -45,6 +45,8 @@ jobs:
           import fs from "node:fs/promises";
           import path from "node:path";
 
+          process.chdir(process.env.GITHUB_WORKSPACE);
+
           const targets = [
             {
               name: "explore-mississippi",
