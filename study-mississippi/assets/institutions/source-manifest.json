@@ -14,7 +14,7 @@
       "width": 144,
       "height": 45
     },
-    "syncedAt": "2026-10-02T04:32:15.789Z"
+    "syncedAt": "2026-10-02T04:42:13.193Z"
   },
   "belhaven-university": {
     "name": "Belhaven University",
@@ -31,7 +31,7 @@
       "width": 343.109375,
       "height": 26
     },
-    "syncedAt": "2026-10-02T04:32:21.360Z"
+    "syncedAt": "2026-10-02T04:42:18.888Z"
   },
   "blue-mountain-christian-university": {
     "name": "Blue Mountain Christian University",
@@ -48,13 +48,13 @@
       "width": 193,
       "height": 105.3125
     },
-    "syncedAt": "2026-10-02T04:32:27.048Z"
+    "syncedAt": "2026-10-02T04:42:25.214Z"
   },
   "delta-state-university": {
     "name": "Delta State University",
     "officialWebsite": "https://www.deltastate.edu/",
     "error": "Error: No logo-like candidates found",
-    "syncedAt": "2026-10-02T04:32:31.815Z"
+    "syncedAt": "2026-10-02T04:42:29.957Z"
   },
   "jackson-state-university": {
     "name": "Jackson State University",
@@ -71,7 +71,7 @@
       "width": 180,
       "height": 55.9375
     },
-    "syncedAt": "2026-10-02T04:32:36.907Z"
+    "syncedAt": "2026-10-02T04:42:35.093Z"
   },
   "meridian-community-college": {
     "name": "Meridian Community College",
@@ -88,7 +88,7 @@
       "width": 336,
       "height": 102
     },
-    "syncedAt": "2026-10-02T04:32:42.950Z"
+    "syncedAt": "2026-10-02T04:42:41.221Z"
   },
   "millsaps-college": {
     "name": "Millsaps College",
@@ -105,7 +105,7 @@
       "width": 187.484375,
       "height": 88.109375
     },
-    "syncedAt": "2026-10-02T04:32:48.525Z"
+    "syncedAt": "2026-10-02T04:42:47.023Z"
   },
   "mississippi-christian-university": {
     "name": "Mississippi Christian University",
@@ -122,7 +122,7 @@
       "width": 230,
       "height": 65.03125
     },
-    "syncedAt": "2026-10-02T04:32:53.789Z"
+    "syncedAt": "2026-10-02T04:42:52.452Z"
   },
   "mississippi-state-university": {
     "name": "Mississippi State University",
@@ -139,7 +139,7 @@
       "width": 424.953125,
       "height": 81.09375
     },
-    "syncedAt": "2026-10-02T04:32:59.222Z"
+    "syncedAt": "2026-10-02T04:42:57.877Z"
   },
   "mississippi-university-for-women": {
     "name": "Mississippi University for Women",
@@ -156,13 +156,13 @@
       "width": 750,
       "height": 124.296875
     },
-    "syncedAt": "2026-10-02T04:33:06.101Z"
+    "syncedAt": "2026-10-02T04:43:04.684Z"
   },
   "mississippi-valley-state-university": {
     "name": "Mississippi Valley State University",
     "officialWebsite": "https://www.mvsu.edu/",
     "error": "Error: No logo-like candidates found",
-    "syncedAt": "2026-10-02T04:33:12.595Z"
+    "syncedAt": "2026-10-02T04:43:10.493Z"
   },
   "the-piney-woods-school": {
     "name": "The Piney Woods School",
@@ -179,7 +179,7 @@
       "width": 130,
       "height": 78
     },
-    "syncedAt": "2026-10-02T04:33:17.755Z"
+    "syncedAt": "2026-10-02T04:43:15.505Z"
   },
   "st-andrews-episcopal-school": {
     "name": "St. Andrew's Episcopal School",
@@ -196,7 +196,7 @@
       "width": 229.953125,
       "height": 57.875
     },
-    "syncedAt": "2026-10-02T04:33:23.215Z"
+    "syncedAt": "2026-10-02T04:43:20.769Z"
   },
   "tougaloo-college": {
     "name": "Tougaloo College",
@@ -213,7 +213,7 @@
       "width": 204.703125,
       "height": 65
     },
-    "syncedAt": "2026-10-02T04:33:28.298Z"
+    "syncedAt": "2026-10-02T04:43:44.272Z"
   },
   "university-of-mississippi": {
     "name": "University of Mississippi",
@@ -230,13 +230,13 @@
       "width": 208,
       "height": 62
     },
-    "syncedAt": "2026-10-02T04:33:34.570Z"
+    "syncedAt": "2026-10-02T04:43:51.362Z"
   },
   "the-university-of-southern-mississippi": {
     "name": "The University of Southern Mississippi",
     "officialWebsite": "https://www.usm.edu/",
     "error": "Error: No logo-like candidates found",
-    "syncedAt": "2026-10-02T04:33:40.714Z"
+    "syncedAt": "2026-10-02T04:43:57.206Z"
   },
   "william-carey-university": {
     "name": "William Carey University",
@@ -253,6 +253,6 @@
       "width": 300,
       "height": 87
     },
-    "syncedAt": "2026-10-02T04:33:46.923Z"
+    "syncedAt": "2026-10-02T04:44:03.369Z"
   }
 }
