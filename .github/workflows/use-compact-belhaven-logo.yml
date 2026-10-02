@@ -1,0 +1,60 @@
+name: Use compact Belhaven logo
+
+on:
+  push:
+    paths:
+      - ".github/workflows/use-compact-belhaven-logo.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch official Belhaven lettermark column
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p study-mississippi/assets/institutions /tmp/belhaven-logo
+          curl -L --fail --retry 3 -A "Mozilla/5.0" \
+            "https://www.belhaven.edu/_images/logos/BU%20Primary%20Logos/BU%20Lettermark_Column/bu_lettermark_column_rgb.png" \
+            -o /tmp/belhaven-logo/logo.png
+          python3 - <<'PY'
+          from PIL import Image
+          im=Image.open('/tmp/belhaven-logo/logo.png').convert('RGBA')
+          bg=Image.new('RGBA',im.size,'white')
+          bg.alpha_composite(im)
+          bg.convert('RGB').save('/tmp/belhaven-logo/logo-flat.png')
+          PY
+          python3 -m pip install --quiet pillow
+        continue-on-error: false
+
+      - name: Convert and commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/belhaven-logo/node
+          cd /tmp/belhaven-logo/node
+          npm init -y >/dev/null 2>&1
+          npm install sharp >/dev/null 2>&1
+          cat > convert.mjs <<'EOF'
+          import sharp from "sharp";
+          import path from "node:path";
+          const root=process.env.GITHUB_WORKSPACE;
+          await sharp("/tmp/belhaven-logo/logo.png",{failOn:"none"})
+            .flatten({background:"#ffffff"})
+            .trim({background:"#ffffff",threshold:8})
+            .resize({width:620,height:620,fit:"inside",withoutEnlargement:false})
+            .webp({quality:94,effort:5})
+            .toFile(path.join(root,"study-mississippi/assets/institutions/belhaven-university.webp"));
+          EOF
+          node convert.mjs
+          cd "$GITHUB_WORKSPACE"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add study-mississippi/assets/institutions/belhaven-university.webp
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Use official compact Belhaven lettermark"
+          git push
