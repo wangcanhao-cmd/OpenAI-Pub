@@ -11,42 +11,28 @@
       "ratio": 3.2,
       "page": "https://www.alcorn.edu/marketing-and-communication/"
     },
-    "syncedAt": "2026-10-02T05:16:59.049Z"
+    "syncedAt": "2026-10-02T07:43:49.976Z"
   },
   "belhaven-university": {
     "name": "Belhaven University",
     "officialWebsite": "https://www.belhaven.edu/",
-    "selected": {
-      "src": "https://www.belhaven.edu/_files/images/BelhavenLogoWhite.svg",
-      "alt": "Belhaven University logo",
-      "score": 2000,
-      "renderedWidth": 343.109375,
-      "renderedHeight": 26,
-      "ratio": 13.196514423076923,
-      "page": "https://www.belhaven.edu/about/contact/logos-branding.html"
-    },
-    "syncedAt": "2026-10-02T05:17:04.052Z"
+    "source": "user-approved logo",
+    "pinned": true,
+    "syncedAt": "2026-10-02T07:43:49.989Z"
   },
   "blue-mountain-christian-university": {
     "name": "Blue Mountain Christian University",
     "officialWebsite": "https://www.bmc.edu/",
-    "selected": {
-      "src": "https://irp.cdn-website.com/c5f03851/dms3rep/multi/opt/Blue-Mountain-College-mark-only%28dark-backgrounds%29-1920w.png",
-      "alt": "",
-      "score": 4450,
-      "renderedWidth": 182.421875,
-      "renderedHeight": 194.296875,
-      "ratio": 0.9388821873743466,
-      "page": "https://www.bmc.edu/"
-    },
-    "syncedAt": "2026-10-02T05:17:09.877Z"
+    "source": "user-approved logo",
+    "pinned": true,
+    "syncedAt": "2026-10-02T07:43:49.990Z"
   },
   "delta-state-university": {
     "name": "Delta State University",
     "officialWebsite": "https://www.deltastate.edu/",
     "keptExisting": true,
     "rejected": [],
-    "syncedAt": "2026-10-02T05:17:14.171Z"
+    "syncedAt": "2026-10-02T07:43:54.272Z"
   },
   "jackson-state-university": {
     "name": "Jackson State University",
@@ -60,7 +46,7 @@
       "ratio": 1.9575757575757575,
       "page": "https://www.jsums.edu/universitycommunications/jsu-logo/"
     },
-    "syncedAt": "2026-10-02T05:17:22.330Z"
+    "syncedAt": "2026-10-02T07:44:01.054Z"
   },
   "millsaps-college": {
     "name": "Millsaps College",
@@ -69,7 +55,7 @@
     "rejected": [
       "low entropy https://millsaps.edu/wp-content/uploads/2023/08/millsaps-logo-stacked.png"
     ],
-    "syncedAt": "2026-10-02T05:17:28.103Z"
+    "syncedAt": "2026-10-02T07:44:07.278Z"
   },
   "mississippi-state-university": {
     "name": "Mississippi State University",
@@ -83,7 +69,7 @@
       "ratio": 0.7552341073467834,
       "page": "https://www.brand.msstate.edu/assets/index.php"
     },
-    "syncedAt": "2026-10-02T05:17:38.247Z"
+    "syncedAt": "2026-10-02T07:44:18.096Z"
   },
   "mississippi-university-for-women": {
     "name": "Mississippi University for Women",
@@ -97,14 +83,14 @@
       "ratio": 1.347330398464838,
       "page": "https://www.muw.edu/ur/branding/logos-wordmarks/"
     },
-    "syncedAt": "2026-10-02T05:17:44.175Z"
+    "syncedAt": "2026-10-02T07:44:24.049Z"
   },
   "the-piney-woods-school": {
     "name": "The Piney Woods School",
     "officialWebsite": "https://www.pineywoods.org/",
     "keptExisting": true,
     "rejected": [],
-    "syncedAt": "2026-10-02T05:17:48.513Z"
+    "syncedAt": "2026-10-02T07:44:28.427Z"
   },
   "st-andrews-episcopal-school": {
     "name": "St. Andrew's Episcopal School",
@@ -118,7 +104,7 @@
       "ratio": 1,
       "page": "https://www.gosaints.org/"
     },
-    "syncedAt": "2026-10-02T05:17:53.648Z"
+    "syncedAt": "2026-10-02T07:44:33.816Z"
   },
   "tougaloo-college": {
     "name": "Tougaloo College",
@@ -132,7 +118,7 @@
       "ratio": 3.14921875,
       "page": "https://www.tougaloo.edu/about-tougaloo-college/communications"
     },
-    "syncedAt": "2026-10-02T05:18:03.317Z"
+    "syncedAt": "2026-10-02T07:44:43.366Z"
   },
   "university-of-mississippi": {
     "name": "University of Mississippi",
@@ -146,7 +132,7 @@
       "ratio": 1,
       "page": "https://olemiss.edu/marcomm/brand-services/"
     },
-    "syncedAt": "2026-10-02T05:18:15.095Z"
+    "syncedAt": "2026-10-02T07:44:55.425Z"
   },
   "the-university-of-southern-mississippi": {
     "name": "The University of Southern Mississippi",
@@ -160,7 +146,7 @@
       "ratio": 1.045421013805459,
       "page": "https://www.usm.edu/university-communications/university-logo.php"
     },
-    "syncedAt": "2026-10-02T05:18:20.455Z"
+    "syncedAt": "2026-10-02T07:45:00.809Z"
   },
   "william-carey-university": {
     "name": "William Carey University",
@@ -169,11 +155,11 @@
       "src": "https://www.wmcarey.edu/_assets/images/base/themeverse_footer.png",
       "alt": "Footer logo",
       "score": 4200,
-      "renderedWidth": 308.943359375,
-      "renderedHeight": 431.99169921875,
-      "ratio": 0.7151604068636482,
+      "renderedWidth": 308.9439697265625,
+      "renderedHeight": 431.9921875,
+      "ratio": 0.7151610113934352,
       "page": "https://www.wmcarey.edu/external-relations/branding"
     },
-    "syncedAt": "2026-10-02T05:18:32.396Z"
+    "syncedAt": "2026-10-02T07:45:13.243Z"
   }
 }
