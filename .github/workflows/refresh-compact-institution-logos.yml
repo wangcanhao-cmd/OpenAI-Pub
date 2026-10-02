@@ -1,0 +1,99 @@
+name: Refresh compact institution logos
+
+on:
+  push:
+    paths:
+      - ".github/workflows/refresh-compact-institution-logos.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Prepare tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq poppler-utils librsvg2-bin >/dev/null
+          mkdir -p /tmp/logo-refresh
+          cd /tmp/logo-refresh
+          npm init -y >/dev/null 2>&1
+          npm install sharp >/dev/null 2>&1
+
+      - name: Fetch verified compact assets and render brand-guide previews
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p study-mississippi/assets/institutions/brand-previews
+
+          # Current official Belhaven stacked logo.
+          curl -L --fail --retry 3 -A "Mozilla/5.0" \
+            "https://www.belhaven.edu/_images/logos/BU%20Primary%20Logos/BU%20Stacked%20Logos/bu_stacked_rgb.png" \
+            -o /tmp/logo-refresh/belhaven.png
+
+          # Current official Mississippi State square web logo.
+          curl -L --fail --retry 3 -A "Mozilla/5.0" \
+            "https://cdn01.its.msstate.edu/i/logos/msstate/SQUARE_WEB_maroon.svg" \
+            -o /tmp/logo-refresh/msu.svg
+
+          # JSU Communications labels this image JSUfinal as the current official university logo.
+          curl -L --fail --retry 3 -A "Mozilla/5.0" \
+            "https://jsutoday.files.wordpress.com/2012/04/jsulogorgb.jpg?h=300&w=900" \
+            -o /tmp/logo-refresh/jsu.jpg
+
+          # Official brand guides for logos that are not exposed as a simple public image file.
+          curl -L --fail --retry 3 -A "Mozilla/5.0" \
+            "https://www.wmcarey.edu/_assets/documents/branding/identity-standards-manual.pdf" \
+            -o /tmp/logo-refresh/wcu.pdf
+          curl -L --fail --retry 3 -A "Mozilla/5.0" \
+            "https://www.deltastate.edu/docs/univ_relations/Logo%20choosing%20guide.pdf" \
+            -o /tmp/logo-refresh/delta.pdf
+          curl -L --fail --retry 3 -A "Mozilla/5.0" \
+            "https://www.alcorn.edu/wp-content/uploads/2025/07/Alcorn-Style-Guide-2025.pdf" \
+            -o /tmp/logo-refresh/alcorn.pdf
+
+          # Convert verified direct assets to consistent local webp without stretching.
+          cat > /tmp/logo-refresh/convert.mjs <<'EOF'
+          import sharp from "sharp";
+          import fs from "node:fs/promises";
+          process.chdir(process.env.GITHUB_WORKSPACE);
+          async function convert(src,out){
+            await sharp(src,{failOn:"none",density:300})
+              .flatten({background:"#ffffff"})
+              .trim({background:"#ffffff",threshold:8})
+              .resize({width:620,height:620,fit:"inside",withoutEnlargement:false})
+              .webp({quality:94,effort:5})
+              .toFile(out);
+          }
+          await convert("/tmp/logo-refresh/belhaven.png","study-mississippi/assets/institutions/belhaven-university.webp");
+          await convert("/tmp/logo-refresh/msu.svg","study-mississippi/assets/institutions/mississippi-state-university.webp");
+          await convert("/tmp/logo-refresh/jsu.jpg","study-mississippi/assets/institutions/jackson-state-university.webp");
+          EOF
+          cd /tmp/logo-refresh
+          node convert.mjs
+
+          # Render exact guide pages for the stacked/compact primary logos.
+          pdftoppm -f 16 -singlefile -r 130 -png /tmp/logo-refresh/wcu.pdf \
+            study-mississippi/assets/institutions/brand-previews/wcu-primary-variations
+          pdftoppm -f 1 -singlefile -r 130 -png /tmp/logo-refresh/delta.pdf \
+            study-mississippi/assets/institutions/brand-previews/delta-logo-guide
+          pdftoppm -f 20 -singlefile -r 130 -png /tmp/logo-refresh/alcorn.pdf \
+            study-mississippi/assets/institutions/brand-previews/alcorn-primary-logos
+
+      - name: Commit refreshed assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add study-mississippi/assets/institutions
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "Refresh compact institution logo assets"
+          git push
