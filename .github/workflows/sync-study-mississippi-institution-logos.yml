@@ -177,6 +177,98 @@ jobs:
           cd /tmp/institution-logo-sync
           node sync.mjs
 
+      - name: Correct logos from official brand resources
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq poppler-utils >/dev/null
+
+          cat > /tmp/institution-logo-sync/correct.mjs <<'EOF'
+          import sharp from "sharp";
+          import fs from "node:fs/promises";
+          import { execFileSync } from "node:child_process";
+
+          process.chdir(process.env.GITHUB_WORKSPACE);
+
+          async function fetchBuffer(url, referer) {
+            const res = await fetch(url, {
+              headers: {
+                "user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/136 Safari/537.36",
+                "referer":referer || url,
+                "accept":"image/avif,image/webp,image/apng,image/svg+xml,image/*,application/pdf,*/*;q=0.8"
+              },
+              redirect:"follow"
+            });
+            if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
+            return Buffer.from(await res.arrayBuffer());
+          }
+
+          async function saveImage(url, out, referer) {
+            const b=await fetchBuffer(url,referer);
+            await sharp(b,{failOn:"none"})
+              .flatten({background:"#ffffff"})
+              .trim({background:"#ffffff",threshold:8})
+              .resize({width:720,height:260,fit:"inside",withoutEnlargement:false})
+              .webp({quality:92,effort:5})
+              .toFile(out);
+          }
+
+          // Official logo pages provide these exact current assets.
+          await saveImage(
+            "https://www.muw.edu/ur/wp-content/uploads/sites/57/2024/01/w-logo_horizontal_blue-1024x259.jpg",
+            "study-mississippi/assets/institutions/mississippi-university-for-women.webp",
+            "https://www.muw.edu/ur/branding/logos-wordmarks/"
+          );
+          await saveImage(
+            "https://www.usm.edu/university-communications/files/univ_h_123pc.png",
+            "study-mississippi/assets/institutions/the-university-of-southern-mississippi.webp",
+            "https://www.usm.edu/university-communications/university-logo.php"
+          );
+
+          // MVSU: official style guide page 7 shows the preferred horizontal university signature.
+          const mvsuPdf="/tmp/mvsu-styleguide.pdf";
+          await fs.writeFile(mvsuPdf,await fetchBuffer(
+            "https://www.mvsu.edu/sites/default/files/mvsu_styleguide.pdf",
+            "https://www.mvsu.edu/mvsu-style-guide"
+          ));
+          execFileSync("pdftoppm",["-f","7","-singlefile","-r","200","-png",mvsuPdf,"/tmp/mvsu-page"]);
+          await sharp("/tmp/mvsu-page.png")
+            .extract({left:250,top:420,width:900,height:280})
+            .flatten({background:"#ffffff"})
+            .trim({background:"#ffffff",threshold:10})
+            .resize({width:720,height:260,fit:"inside",withoutEnlargement:false})
+            .webp({quality:92,effort:5})
+            .toFile("study-mississippi/assets/institutions/mississippi-valley-state-university.webp");
+
+          // Delta State: official logo guide; crop the primary "LOGO ONLY" signature.
+          const deltaPdf="/tmp/delta-logo-guide.pdf";
+          await fs.writeFile(deltaPdf,await fetchBuffer(
+            "https://www.deltastate.edu/PDFFiles/Logo%20choosing%20guide.pdf",
+            "https://www.deltastate.edu/communications-and-marketing/"
+          ));
+          execFileSync("pdftoppm",["-f","1","-singlefile","-r","200","-png",deltaPdf,"/tmp/delta-page"]);
+          const dm=await sharp("/tmp/delta-page.png").metadata();
+          const dw=dm.width||2200, dh=dm.height||1700;
+          await sharp("/tmp/delta-page.png")
+            .extract({
+              left:Math.round(dw*0.035),
+              top:Math.round(dh*0.08),
+              width:Math.round(dw*0.29),
+              height:Math.round(dh*0.19)
+            })
+            .flatten({background:"#ffffff"})
+            .trim({background:"#ffffff",threshold:10})
+            .resize({width:720,height:260,fit:"inside",withoutEnlargement:false})
+            .webp({quality:92,effort:5})
+            .toFile("study-mississippi/assets/institutions/delta-state-university.webp");
+
+          console.log("Corrected MUW, USM, MVSU, and Delta State logos from official brand resources.");
+          EOF
+
+          cd /tmp/institution-logo-sync
+          node correct.mjs
+
       - name: Commit institution logos
         shell: bash
         run: |
