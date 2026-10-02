@@ -41,6 +41,7 @@ jobs:
           import { chromium } from "playwright";
           import sharp from "sharp";
           import fs from "node:fs/promises";
+          import { chromium } from "playwright";
 
           process.chdir(process.env.GITHUB_WORKSPACE);
 
@@ -241,29 +242,73 @@ jobs:
             .webp({quality:92,effort:5})
             .toFile("study-mississippi/assets/institutions/mississippi-valley-state-university.webp");
 
-          // Delta State: official logo guide; crop the primary "LOGO ONLY" signature.
-          const deltaPdf="/tmp/delta-logo-guide.pdf";
-          await fs.writeFile(deltaPdf,await fetchBuffer(
-            "https://www.deltastate.edu/PDFFiles/Logo%20choosing%20guide.pdf",
-            "https://www.deltastate.edu/communications-and-marketing/"
-          ));
-          execFileSync("pdftoppm",["-f","1","-singlefile","-r","200","-png",deltaPdf,"/tmp/delta-page"]);
-          const dm=await sharp("/tmp/delta-page.png").metadata();
-          const dw=dm.width||2200, dh=dm.height||1700;
-          await sharp("/tmp/delta-page.png")
-            .extract({
-              left:Math.round(dw*0.035),
-              top:Math.round(dh*0.08),
-              width:Math.round(dw*0.29),
-              height:Math.round(dh*0.19)
-            })
-            .flatten({background:"#ffffff"})
-            .trim({background:"#ffffff",threshold:10})
-            .resize({width:720,height:260,fit:"inside",withoutEnlargement:false})
-            .webp({quality:92,effort:5})
-            .toFile("study-mississippi/assets/institutions/delta-state-university.webp");
+          // Delta State: capture the official logo asset rendered in the university header.
+          const browser=await chromium.launch({headless:true});
+          const page=await browser.newPage({viewport:{width:1600,height:1000},deviceScaleFactor:3});
+          await page.goto("https://www.deltastate.edu/",{waitUntil:"domcontentloaded",timeout:90000});
+          await page.waitForTimeout(5000);
+
+          const deltaCandidates=await page.locator("body *").evaluateAll(els=>{
+            const out=[];
+            for(let i=0;i<els.length;i++){
+              const el=els[i];
+              const r=el.getBoundingClientRect();
+              if(r.width<70||r.height<20||r.width>1000||r.height>350||r.top>420||r.bottom<0) continue;
+              const cs=getComputedStyle(el);
+              if(cs.display==="none"||cs.visibility==="hidden"||Number(cs.opacity||1)<.05) continue;
+              const before=getComputedStyle(el,"::before");
+              const after=getComputedStyle(el,"::after");
+              const bg=[cs.backgroundImage,before.backgroundImage,after.backgroundImage].filter(v=>v&&v!=="none").join(" ");
+              const txt=[
+                el.id||"",
+                typeof el.className==="string"?el.className:"",
+                el.getAttribute("aria-label")||"",
+                el.getAttribute("title")||"",
+                bg,
+                (el.textContent||"").slice(0,120)
+              ].join(" ").toLowerCase();
+              let score=0;
+              if(/logo|brand|site-logo|header-logo/.test(txt)) score+=1500;
+              if(/delta/.test(txt)) score+=700;
+              if(/university/.test(txt)) score+=250;
+              if(bg.includes("url(")) score+=450;
+              if(/header|masthead|navbar/.test(txt)) score+=250;
+              if(/footer|icon|social|search|menu/.test(txt)) score-=500;
+              score+=Math.max(0,400-r.top);
+              score+=Math.min(400,r.width);
+              out.push({index:i,score,id:el.id||"",cls:typeof el.className==="string"?el.className:"",bg,top:r.top,width:r.width,height:r.height});
+            }
+            return out.sort((x,y)=>y.score-x.score).slice(0,30);
+          });
+
+          console.log("Delta candidates:",JSON.stringify(deltaCandidates.slice(0,10)));
+          let deltaSaved=false;
+          for(const c of deltaCandidates){
+            try{
+              const loc=page.locator("body *").nth(c.index);
+              if(!(await loc.isVisible())) continue;
+              const png=await loc.screenshot({type:"png"});
+              const meta=await sharp(png).metadata();
+              if((meta.width||0)<180||(meta.height||0)<45) continue;
+              await sharp(png)
+                .flatten({background:"#ffffff"})
+                .trim({background:"#ffffff",threshold:8})
+                .resize({width:720,height:260,fit:"inside",withoutEnlargement:false})
+                .webp({quality:92,effort:5})
+                .toFile("study-mississippi/assets/institutions/delta-state-university.webp");
+              console.log("Delta State selected candidate:",JSON.stringify(c));
+              deltaSaved=true;
+              break;
+            }catch(e){
+              console.log("Delta candidate failed:",String(e));
+            }
+          }
+          await page.close();
+          await browser.close();
+          if(!deltaSaved) throw new Error("Could not capture Delta State official header logo");
 
           console.log("Corrected MUW, USM, MVSU, and Delta State logos from official brand resources.");
+
           EOF
 
           cd /tmp/institution-logo-sync
