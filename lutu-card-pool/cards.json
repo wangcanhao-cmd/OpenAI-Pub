@@ -1,6 +1,6 @@
 {
-  "updatedAt": "2026-09-28",
-  "count": 41,
+  "updatedAt": "2026-10-03",
+  "count": 42,
   "cards": [
     {
       "id": 1,
@@ -246,6 +246,12 @@
       "id": 41,
       "owned": true,
       "name": "卞夫人",
+      "note": ""
+    },
+    {
+      "id": 42,
+      "owned": true,
+      "name": "步诸葛亮",
       "note": ""
     }
   ]
