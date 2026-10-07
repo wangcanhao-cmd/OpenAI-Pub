@@ -1,6 +1,6 @@
 {
-  "updatedAt": "2026-10-03",
-  "count": 42,
+  "updatedAt": "2026-10-07",
+  "count": 43,
   "cards": [
     {
       "id": 1,
@@ -162,7 +162,7 @@
       "id": 27,
       "owned": true,
       "name": "普通卢植",
-      "note": "暂时分解"
+      "note": ""
     },
     {
       "id": 28,
@@ -252,6 +252,12 @@
       "id": 42,
       "owned": true,
       "name": "步诸葛亮",
+      "note": ""
+    },
+    {
+      "id": 43,
+      "owned": true,
+      "name": "汉荀彧",
       "note": ""
     }
   ]
