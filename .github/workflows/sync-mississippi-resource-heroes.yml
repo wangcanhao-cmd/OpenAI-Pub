@@ -3,7 +3,9 @@ name: Sync Mississippi resource hero images
 on:
   workflow_dispatch:
   schedule:
-    - cron: "17 9 * * *"
+    # Every two days at 2:00 PM Mississippi time while CDT is in effect.
+    # GitHub Actions cron is UTC, so 19:00 UTC = 14:00 CDT.
+    - cron: "0 19 */2 * *"
   push:
     paths:
       - ".github/workflows/sync-mississippi-resource-heroes.yml"
@@ -63,19 +65,27 @@ jobs:
           const browser = await chromium.launch({headless:true});
           const manifest = {};
 
-          async function downloadImage(url, referer) {
-            const res = await fetch(url, {
-              headers: {
-                "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/136 Safari/537.36",
-                "referer": referer,
-                "accept": "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8"
-              },
-              redirect: "follow"
-            });
-            if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
-            const type = res.headers.get("content-type") || "";
-            if (!type.startsWith("image/")) throw new Error(`Not an image (${type}) for ${url}`);
-            return Buffer.from(await res.arrayBuffer());
+          async function downloadImage(page, url, referer) {
+            // Download through a real Chromium navigation instead of Node fetch().
+            // This preserves the browser session/cookies and avoids external sites
+            // returning an HTML bot/challenge page to GitHub runner HTTP requests.
+            const imagePage = await page.context().newPage();
+            try {
+              const res = await imagePage.goto(url, {
+                waitUntil: "commit",
+                timeout: 90000,
+                referer
+              });
+              if (!res) throw new Error(`No response for ${url}`);
+              if (!res.ok()) throw new Error(`HTTP ${res.status()} for ${url}`);
+              const type = res.headers()["content-type"] || "";
+              if (!type.startsWith("image/")) {
+                throw new Error(`Not an image (${type}) for ${url}`);
+              }
+              return Buffer.from(await res.body());
+            } finally {
+              await imagePage.close();
+            }
           }
 
           for (const target of targets) {
@@ -140,7 +150,7 @@ jobs:
             for (const c of candidates) {
               try {
                 const absolute = new URL(c.url, page.url()).href;
-                const b = await downloadImage(absolute, target.url);
+                const b = await downloadImage(page, absolute, target.url);
                 const meta = await sharp(b, {failOn:"none"}).metadata();
                 if ((meta.width || 0) < 800 || (meta.height || 0) < 350) {
                   errors.push(`too small ${meta.width}x${meta.height}: ${absolute}`);
@@ -158,7 +168,7 @@ jobs:
             // to the same poster if page markup changes before the extractor catches up.
             if (!chosen && target.name === "visit-mississippi") {
               const fallback = "https://visitmississippi.org/wp-content/uploads/2025/03/birthplace-cover-poster-scaled.jpg";
-              buffer = await downloadImage(fallback, target.url);
+              buffer = await downloadImage(page, fallback, target.url);
               const meta = await sharp(buffer).metadata();
               chosen = {
                 url:fallback,
