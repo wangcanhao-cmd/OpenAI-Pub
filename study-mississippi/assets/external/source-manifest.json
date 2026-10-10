@@ -5,14 +5,14 @@
     "kind": "background",
     "intrinsicWidth": 1920,
     "intrinsicHeight": 1080,
-    "syncedAt": "2026-10-10T17:57:50.068Z"
+    "syncedAt": "2026-10-10T22:23:51.235Z"
   },
   "visit-mississippi": {
     "page": "https://visitmississippi.org/",
-    "image": "https://visitmississippi.org/wp-content/uploads/2025/03/birthplace-cover-poster-scaled.jpg",
-    "kind": "video-poster",
-    "intrinsicWidth": 2560,
-    "intrinsicHeight": 1440,
-    "syncedAt": "2026-10-10T17:57:57.378Z"
+    "image": "https://visitmississippi.org/wp-content/uploads/2021/05/gulfport-sunset.jpg",
+    "kind": "og:image",
+    "intrinsicWidth": 1920,
+    "intrinsicHeight": 1080,
+    "syncedAt": "2026-10-10T22:23:58.098Z"
   }
 }
