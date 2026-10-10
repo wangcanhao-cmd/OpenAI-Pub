@@ -124,7 +124,8 @@ jobs:
           }
 
           for (const target of targets) {
-            const page = await browser.newPage({viewport:{width:1600,height:1000}});
+            const context = await browser.newContext({viewport:{width:1600,height:1000}});
+            const page = await context.newPage();
             console.log(`Loading ${target.url}`);
 
             await page.goto(target.url, {waitUntil:"domcontentloaded", timeout:90000});
@@ -234,7 +235,7 @@ jobs:
             };
 
             console.log(`${target.name}: ${chosen.kind} -> ${chosen.url}`);
-            await page.close();
+            await context.close();
           }
 
           await browser.close();
