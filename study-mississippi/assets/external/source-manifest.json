@@ -1,18 +1,18 @@
 {
   "explore-mississippi": {
     "page": "https://exploremississippi.com/",
-    "image": "https://exploremississippi.com/nitropack_static/XvDKMXAueJskHqAPfZgOuERlrBJqPyDG/assets/images/optimized/rev-69912e5/exploremississippi.com/wp-content/uploads/2023/11/Explore-Mississippi-Featured-Image.webp",
-    "kind": "background",
-    "intrinsicWidth": 1920,
-    "intrinsicHeight": 1080,
-    "syncedAt": "2026-10-10T22:23:51.235Z"
+    "image": "http://exploremississippi.com/wp-content/uploads/2023/11/Vicksburg-Mississippi-Relocation-Guide-1024x576.webp",
+    "kind": "og:image",
+    "intrinsicWidth": 1024,
+    "intrinsicHeight": 576,
+    "syncedAt": "2026-10-14T22:12:10.051Z"
   },
   "visit-mississippi": {
     "page": "https://visitmississippi.org/",
-    "image": "https://visitmississippi.org/wp-content/uploads/2021/05/gulfport-sunset.jpg",
-    "kind": "og:image",
-    "intrinsicWidth": 1920,
-    "intrinsicHeight": 1080,
-    "syncedAt": "2026-10-10T22:23:58.098Z"
+    "image": "https://visitmississippi.org/wp-content/uploads/2025/03/birthplace-cover-poster-scaled.jpg",
+    "kind": "video-poster",
+    "intrinsicWidth": 2560,
+    "intrinsicHeight": 1440,
+    "syncedAt": "2026-10-14T22:12:17.090Z"
   }
 }
