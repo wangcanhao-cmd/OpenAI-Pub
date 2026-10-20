@@ -1,11 +1,11 @@
 {
   "explore-mississippi": {
     "page": "https://exploremississippi.com/",
-    "image": "http://exploremississippi.com/wp-content/uploads/2023/11/Vicksburg-Mississippi-Relocation-Guide-1024x576.webp",
-    "kind": "og:image",
-    "intrinsicWidth": 1024,
-    "intrinsicHeight": 576,
-    "syncedAt": "2026-10-18T21:23:28.595Z"
+    "image": "https://exploremississippi.com/nitropack_static/XvDKMXAueJskHqAPfZgOuERlrBJqPyDG/assets/images/optimized/rev-60b9f84/exploremississippi.com/wp-content/uploads/2023/11/Explore-Mississippi-Featured-Image.webp",
+    "kind": "background",
+    "intrinsicWidth": 1920,
+    "intrinsicHeight": 1080,
+    "syncedAt": "2026-10-20T22:13:04.310Z"
   },
   "visit-mississippi": {
     "page": "https://visitmississippi.org/",
@@ -13,6 +13,6 @@
     "kind": "video-poster",
     "intrinsicWidth": 2560,
     "intrinsicHeight": 1440,
-    "syncedAt": "2026-10-18T21:23:35.200Z"
+    "syncedAt": "2026-10-20T22:13:11.810Z"
   }
 }
