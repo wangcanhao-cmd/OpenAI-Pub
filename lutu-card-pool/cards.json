@@ -1,6 +1,6 @@
 {
-  "updatedAt": "2026-10-07",
-  "count": 43,
+  "updatedAt": "2026-10-26",
+  "count": 49,
   "cards": [
     {
       "id": 1,
@@ -114,7 +114,7 @@
       "id": 19,
       "owned": true,
       "name": "孙鲁班",
-      "note": ""
+      "note": "拆"
     },
     {
       "id": 20,
@@ -143,121 +143,157 @@
     {
       "id": 24,
       "owned": true,
-      "name": "孙策",
+      "name": "汉袁绍",
       "note": ""
     },
     {
       "id": 25,
       "owned": true,
-      "name": "汉袁绍",
+      "name": "汉董卓",
       "note": ""
     },
     {
       "id": 26,
       "owned": true,
-      "name": "汉董卓",
+      "name": "普通祝融夫人",
       "note": ""
     },
     {
       "id": 27,
       "owned": true,
-      "name": "普通卢植",
+      "name": "曹丕",
       "note": ""
     },
     {
       "id": 28,
       "owned": true,
-      "name": "普通祝融夫人",
+      "name": "郭皇后",
       "note": ""
     },
     {
       "id": 29,
       "owned": true,
-      "name": "曹丕",
+      "name": "曹植",
       "note": ""
     },
     {
       "id": 30,
       "owned": true,
-      "name": "郭皇后",
+      "name": "普通周姬",
       "note": ""
     },
     {
       "id": 31,
       "owned": true,
-      "name": "曹植",
+      "name": "普通孙尚香",
       "note": ""
     },
     {
       "id": 32,
       "owned": true,
-      "name": "普通周姬",
+      "name": "普通太史慈",
       "note": ""
     },
     {
       "id": 33,
       "owned": true,
-      "name": "普通孙尚香",
+      "name": "SP太史慈",
       "note": ""
     },
     {
       "id": 34,
       "owned": true,
-      "name": "普通太史慈",
+      "name": "小乔",
       "note": ""
     },
     {
       "id": 35,
       "owned": true,
-      "name": "SP太史慈",
+      "name": "步皇后",
       "note": ""
     },
     {
       "id": 36,
       "owned": true,
-      "name": "小乔",
+      "name": "汉貂蝉",
       "note": ""
     },
     {
       "id": 37,
       "owned": true,
-      "name": "步皇后",
+      "name": "何太后",
       "note": ""
     },
     {
       "id": 38,
       "owned": true,
-      "name": "汉貂蝉",
+      "name": "五星汉曹操",
       "note": ""
     },
     {
       "id": 39,
       "owned": true,
-      "name": "何太后",
+      "name": "卞夫人",
       "note": ""
     },
     {
       "id": 40,
       "owned": true,
-      "name": "五星汉曹操",
+      "name": "步诸葛亮",
       "note": ""
     },
     {
       "id": 41,
       "owned": true,
-      "name": "卞夫人",
+      "name": "朱儁",
       "note": ""
     },
     {
       "id": 42,
       "owned": true,
-      "name": "步诸葛亮",
+      "name": "张姬",
       "note": ""
     },
     {
       "id": 43,
       "owned": true,
+      "name": "魏曹操",
+      "note": ""
+    },
+    {
+      "id": 44,
+      "owned": true,
+      "name": "普通卢植",
+      "note": ""
+    },
+    {
+      "id": 45,
+      "owned": true,
       "name": "汉荀彧",
+      "note": ""
+    },
+    {
+      "id": 46,
+      "owned": true,
+      "name": "孙策",
+      "note": ""
+    },
+    {
+      "id": 47,
+      "owned": true,
+      "name": "刘秀",
+      "note": ""
+    },
+    {
+      "id": 48,
+      "owned": true,
+      "name": "关兴&张苞",
+      "note": ""
+    },
+    {
+      "id": 49,
+      "owned": true,
+      "name": "凌统",
       "note": ""
     }
   ]
