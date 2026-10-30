@@ -25,6 +25,7 @@ button{min-height:40px;border:1px solid #d5d8dc;border-radius:9px;background:#ff
 .actions{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-top:7px}
 .actions button{min-height:34px;font-size:12px;padding:0 3px}
 .footer{font-size:12px;color:#777;line-height:1.5;margin:10px 2px}
+.add-bottom{display:block;width:100%;margin:2px 0 12px}
 .savebox{display:none;background:#fff;border:1px solid #dfe3e7;border-radius:10px;padding:10px;margin-top:10px}
 .savebox textarea{width:100%;min-height:220px;border:1px solid #dfe3e7;border-radius:8px;padding:8px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
 .save-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:8px}
@@ -50,6 +51,7 @@ button{min-height:40px;border:1px solid #d5d8dc;border-radius:9px;background:#ff
 </div>
 
 <div id="list"></div>
+<button id="addBottom" class="add-bottom">＋ 新增武将</button>
 
 <div class="savebox" id="savebox">
   <b>最新版 cards.json</b>
@@ -128,7 +130,11 @@ document.getElementById('list').addEventListener('click',e=>{
   if(e.target.classList.contains('bottom'))return moveItem(i,d.length-1);
   if(e.target.classList.contains('up')&&i>0)return moveItem(i,i-1);
   if(e.target.classList.contains('down')&&i<d.length-1)return moveItem(i,i+1);
-  if(e.target.classList.contains('del')){d.splice(i,1);sel=null;render();return}
+  if(e.target.classList.contains('del')){
+    const name=d[i].name?.trim()||'未命名武将';
+    if(!window.confirm(`确定删除第 ${i+1} 张武将「${name}」吗？`))return;
+    d.splice(i,1);sel=null;render();return;
+  }
   if(!e.target.matches('input')){sel=i;render()}
 });
 document.getElementById('list').addEventListener('input',e=>{
@@ -144,7 +150,7 @@ document.getElementById('list').addEventListener('change',e=>{
   if(e.target.classList.contains('owned'))d[i].owned=e.target.checked;
   saveLocal();
 });
-document.getElementById('add').onclick=()=>{
+function addCard(){
   const n=prompt('新武将名称：','新武将');if(n===null)return;
   const raw=prompt(`插入到第几个后面？\n0=最前面；留空=最后\n当前共 ${d.length} 张`,'');
   if(raw===null)return;
@@ -152,7 +158,9 @@ document.getElementById('add').onclick=()=>{
   if(Number.isNaN(p))return alert('请输入数字');
   p=Math.max(0,Math.min(p,d.length));
   d.splice(p,0,{id:0,owned:true,name:n.trim()||'新武将',note:''});sel=p;render();
-};
+}
+document.getElementById('add').onclick=addCard;
+document.getElementById('addBottom').onclick=addCard;
 document.getElementById('ownedFirst').onclick=()=>{d.sort((a,b)=>(b.owned?1:0)-(a.owned?1:0));sel=null;render()};
 document.getElementById('move').onclick=()=>{if(sel===null)return alert('先点一下要移动的卡片空白处');const p=parseInt(document.getElementById('target').value,10);if(!p||p<1)return alert('请输入有效位置');moveItem(sel,Math.min(p,d.length)-1)};
 document.getElementById('copy').onclick=async()=>{
