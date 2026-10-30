@@ -25,7 +25,7 @@ button{min-height:40px;border:1px solid #d5d8dc;border-radius:9px;background:#ff
 .actions{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-top:7px}
 .actions button{min-height:34px;font-size:12px;padding:0 3px}
 .footer{font-size:12px;color:#777;line-height:1.5;margin:10px 2px}
-.add-bottom{display:block;width:100%;margin:2px 0 12px}
+.bottom-tools{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:2px 0 12px}
 .savebox{display:none;background:#fff;border:1px solid #dfe3e7;border-radius:10px;padding:10px;margin-top:10px}
 .savebox textarea{width:100%;min-height:220px;border:1px solid #dfe3e7;border-radius:8px;padding:8px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
 .save-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:8px}
@@ -51,7 +51,10 @@ button{min-height:40px;border:1px solid #d5d8dc;border-radius:9px;background:#ff
 </div>
 
 <div id="list"></div>
-<button id="addBottom" class="add-bottom">＋ 新增武将</button>
+<div class="bottom-tools">
+  <button id="addBottom">＋ 新增武将</button>
+  <button id="saveGitHubBottom">保存更新</button>
+</div>
 
 <div class="savebox" id="savebox">
   <b>最新版 cards.json</b>
@@ -173,12 +176,14 @@ function buildJson(){
   const now=new Date().toISOString().slice(0,10);
   return JSON.stringify({updatedAt:now,count:d.length,cards:d},null,2);
 }
-document.getElementById('saveGitHub').onclick=()=>{
+function openSaveBox(){
   const box=document.getElementById('savebox');
   document.getElementById('jsonout').value=buildJson();
   box.style.display='block';
   box.scrollIntoView({behavior:'smooth',block:'start'});
-};
+}
+document.getElementById('saveGitHub').onclick=openSaveBox;
+document.getElementById('saveGitHubBottom').onclick=openSaveBox;
 document.getElementById('copyJson').onclick=async()=>{
   const text=document.getElementById('jsonout').value||buildJson();
   try{await navigator.clipboard.writeText(text);alert('JSON 已复制')}catch(e){prompt('复制下面 JSON：',text)}
