@@ -1,6 +1,6 @@
 {
-  "updatedAt": "2026-10-26",
-  "count": 49,
+  "updatedAt": "2026-10-30",
+  "count": 50,
   "cards": [
     {
       "id": 1,
@@ -294,6 +294,12 @@
       "id": 49,
       "owned": true,
       "name": "凌统",
+      "note": ""
+    },
+    {
+      "id": 50,
+      "owned": true,
+      "name": "甄洛",
       "note": ""
     }
   ]
