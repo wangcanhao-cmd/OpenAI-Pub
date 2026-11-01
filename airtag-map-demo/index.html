@@ -46,10 +46,22 @@
       <h1 class="title">AirTag Location Timeline</h1>
       <p class="subtitle">地图标点、历史轨迹与本地记录 · 纯前端 Demo</p>
     </div>
-    <span class="badge">模拟数据 · 未连接 Find My</span>
+    <span class="badge">地图链接导入 · 非自动接口</span>
   </header>
   <div class="wrap">
     <aside class="sidebar">
+      <section class="card">
+        <div class="card-head"><h2>AirTag 位置导入</h2><span class="count">仅本机处理</span></div>
+        <p class="muted" style="margin:0 0 12px">在 iPhone「查找」选择自己的 AirTag →「路线」→ 在 Apple 地图分享目的地链接。将链接粘贴在这里，提取其中的公开坐标并保存在本机浏览器。<strong>这不是 Find My API，无法自动刷新。</strong></p>
+        <form id="airtagLinkForm" class="form">
+          <div><label class="field" for="airtagLink">Apple 地图链接 / 经度纬度</label><input class="fieldbox" id="airtagLink" type="text" placeholder="https://maps.apple.com/?ll=32.2988,-90.1848" required></div>
+          <div class="row"><button class="btn" id="pasteAirTagLink" type="button">粘贴剪贴板链接</button></div>
+          <div><label class="field" for="airtagName">AirTag 名称</label><input class="fieldbox" id="airtagName" maxlength="100" value="My AirTag"></div>
+          <div><label class="field" for="airtagReportAt">Find My 显示的定位时间（可选）</label><input class="fieldbox" id="airtagReportAt" type="datetime-local"></div>
+          <button class="btn primary" type="submit">导入 AirTag 地图位置</button>
+        </form>
+        <p class="muted" style="margin:10px 0 0">请勿输入 Apple ID、密码或验证码。未填写实际报告时间时，记录会标明采集时间，而不是声称刚刚发生的定位。</p>
+      </section>
       <section class="card">
         <div class="card-head"><h2>历史位置</h2><span class="count" id="pointCount">0 points</span></div>
         <div class="timeline" id="timeline" aria-label="历史位置列表"></div>
@@ -106,7 +118,7 @@
       </section>
       <p role="status" aria-live="polite" id="status"></p>
       <section class="notes">
-        <strong>数据来源说明：</strong>目前只有模拟点、手动输入、导入文件及自愿授权的 iPhone GPS，没有读取 AirTag / Find My 的能力。iPhone GPS 不是 AirTag 的实测位置。Google 地图可能向 Google 发送所显示的坐标；浏览器本地数据也不是加密保险库。后续接入位置 API 时应保留 <code>reported_at_utc</code> 与抓取时间的区别。
+        <strong>数据来源说明：</strong>可从「查找 → 路线」生成的 Apple 地图链接<strong>手动</strong>导入 AirTag 目的地坐标，或使用模拟点、手动输入、文件、iPhone GPS。地图链接不是 Find My 原始位置报告；iPhone GPS 不是 AirTag 独立定位。本站没有登录 Apple 账户，也不会自动抓取 AirTag。Google 地图可能向 Google 发送所显示的坐标；浏览器本地数据不是加密保险库。实际报告时间与采集时间分别存储。
       </section>
     </main>
   </div>
@@ -139,17 +151,21 @@
       const label = String(raw.label ?? raw.name ?? "Imported point").slice(0,100);
       const source = String(raw.source ?? "imported").slice(0,50);
       const accuracy = Number(raw.accuracy_m);
-      return {id:uid(),lat,lng,label,timestamp:date.toISOString(),source,accuracy_m:raw.accuracy_m !== undefined && Number.isFinite(accuracy)?accuracy:undefined};
+      const captured = raw.capturedAt ?? raw.captured_at_utc;
+      const fetchedDate = captured ? new Date(captured) : null;
+      const timestampKind = raw.timestampKind ?? raw.timestamp_kind ?? "reported";
+      return {id:uid(),lat,lng,label,timestamp:date.toISOString(),source,timestampKind: timestampKind==="captured"?"captured":"reported", capturedAt:fetchedDate && !Number.isNaN(fetchedDate.getTime())?fetchedDate.toISOString():undefined,accuracy_m:raw.accuracy_m !== undefined && Number.isFinite(accuracy)?accuracy:undefined};
     }
     function sorted(){return [...points].sort((a,b)=>a.timestamp.localeCompare(b.timestamp));}
     function save(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(points));}catch(e){notify("无法写入本地浏览器存储，请先导出文件备份。");}}
     function formatDate(time){return new Date(time).toLocaleString("zh-CN",{month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit"});}
-    function sourceName(s){return ({simulated:"模拟数据",manual:"手动标点","iphone-gps":"iPhone GPS",imported:"导入文件"})[s] || s;}
+    function sourceName(s){return ({simulated:"模拟数据",manual:"手动标点","iphone-gps":"iPhone GPS",imported:"导入文件","findmy-map-link":"地图链接坐标"})[s] || s;}
+    function reportTimeLabel(p){return (p.timestampKind==="captured"?"采集 ":"定位 ")+formatDate(p.timestamp);}
     function current(){return points.find(p=>p.id===selectedId) || sorted().at(-1) || null;}
     function markerPopup(p){
       const node=document.createElement("div");
       const title=document.createElement("strong"); title.textContent=p.label;node.appendChild(title);
-      const details=document.createElement("div");details.textContent=formatDate(p.timestamp)+" · "+sourceName(p.source);node.appendChild(details);
+      const details=document.createElement("div");details.textContent=reportTimeLabel(p)+" · "+sourceName(p.source);node.appendChild(details);
       const coords=document.createElement("div");coords.textContent=p.lat.toFixed(6)+", "+p.lng.toFixed(6);node.appendChild(coords);
       return node;
     }
@@ -161,7 +177,7 @@
         const item=document.createElement("div");item.className="record"+(p.id===selectedId?" selected":"");
         const open=document.createElement("button");open.type="button";open.className="record-main";open.title="查看此位置";
         const title=document.createElement("div");title.className="record-title";title.textContent=p.label;
-        const sub=document.createElement("div");sub.className="record-sub";sub.textContent=formatDate(p.timestamp)+" · "+sourceName(p.source)+"\n"+p.lat.toFixed(5)+", "+p.lng.toFixed(5);
+        const sub=document.createElement("div");sub.className="record-sub";sub.textContent=reportTimeLabel(p)+" · "+sourceName(p.source)+"\n"+p.lat.toFixed(5)+", "+p.lng.toFixed(5);
         open.append(title,sub);open.addEventListener("click",()=>selectPoint(p.id));
         const remove=document.createElement("button");remove.type="button";remove.className="small-delete";remove.title="删除此点";remove.textContent="✕";remove.setAttribute("aria-label","删除 "+p.label);
         remove.addEventListener("click",()=>{points=points.filter(x=>x.id!==p.id);if(selectedId===p.id)selectedId=sorted().at(-1)?.id||null;save();render();notify("已删除位置记录。");});
@@ -313,8 +329,8 @@
     el("sampleBtn").addEventListener("click",demoReset);
     el("clearBtn").addEventListener("click",()=>{if(!points.length)return;if(!confirm("确定删除本浏览器中的全部位置记录？请先导出备份。"))return;points=[];selectedId=null;save();render();notify("已清空本地记录。");});
     el("csvBtn").addEventListener("click",()=>{
-      const columns=["latitude","longitude","reported_at_utc","label","source","accuracy_m"];
-      const csv=[columns.join(","),...sorted().map(p=>[p.lat,p.lng,p.timestamp,p.label,p.source,p.accuracy_m].map(csvEscape).join(","))].join("\r\n");
+      const columns=["latitude","longitude","reported_at_utc","label","source","accuracy_m","captured_at_utc","timestamp_kind"];
+      const csv=[columns.join(","),...sorted().map(p=>[p.lat,p.lng,p.timestampKind==="captured"?"":p.timestamp,p.label,p.source,p.accuracy_m,p.capturedAt || (p.timestampKind==="captured"?p.timestamp:""),p.timestampKind].map(csvEscape).join(","))].join("\r\n");
       exportFile("airtag-map-timeline.csv","\uFEFF"+csv,"text/csv;charset=utf-8");notify("已生成 CSV 下载文件。");
     });
     el("jsonBtn").addEventListener("click",()=>{exportFile("airtag-map-timeline.json",JSON.stringify({version:1,generated_at_utc:new Date().toISOString(),points:sorted()},null,2),"application/json");notify("已生成 JSON 下载文件。");});
@@ -338,5 +354,6 @@
     setMode("osm");
     if(!el("status").textContent)notify("当前显示模拟数据。点击“Google Maps”可预览单点；启用 Maps JavaScript API 后可显示完整 Google 多点图层。");
   </script>
+  <script src="./airtag-connect.js"></script>
 </body>
 </html>
