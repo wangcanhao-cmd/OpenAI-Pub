@@ -146,7 +146,8 @@
       const lat = Number(raw.lat ?? raw.latitude);
       const lng = Number(raw.lng ?? raw.lon ?? raw.longitude);
       if(!Number.isFinite(lat)||!Number.isFinite(lng)||lat < -90||lat > 90||lng < -180||lng > 180) throw Error("无效经纬度");
-      const date = new Date(raw.timestamp ?? raw.reported_at_utc ?? raw.time ?? raw.date ?? Date.now());
+      const timeInput = raw.timestamp || raw.reported_at_utc || raw.capturedAt || raw.captured_at_utc || raw.time || raw.date || Date.now();
+      const date = new Date(timeInput);
       if(Number.isNaN(date.getTime())) throw Error("无效时间");
       const label = String(raw.label ?? raw.name ?? "Imported point").slice(0,100);
       const source = String(raw.source ?? "imported").slice(0,50);
@@ -346,13 +347,13 @@
     el("reportedAt").value=localDateValue(new Date());
     try{
       const raw=localStorage.getItem(STORAGE_KEY);
-      points=raw===null?samples():JSON.parse(raw).map(normalize);
+      points=raw===null?[]:JSON.parse(raw).map(normalize);
       if(raw===null)save();
       selectedId=sorted().at(-1)?.id||null;
     }catch(err){points=[];notify("本地数据读取失败，未自动覆盖。请检查浏览器存储。");}
     try{const key=sessionStorage.getItem("airtag-map-demo-google-key");if(key)el("googleKey").value=key;}catch(e){}
     setMode("osm");
-    if(!el("status").textContent)notify("当前显示模拟数据。点击“Google Maps”可预览单点；启用 Maps JavaScript API 后可显示完整 Google 多点图层。");
+    if(!el("status").textContent)notify("未连接 Apple Find My API。可粘贴「查找 → 路线」生成的 Apple 地图坐标链接，或点击加载模拟轨迹进行测试。");
   </script>
   <script src="./airtag-connect.js"></script>
 </body>
