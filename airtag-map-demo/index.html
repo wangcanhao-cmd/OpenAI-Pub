@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f8fc">
+  <title>AirTag Location Timeline — Map Demo</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <style>
+    :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans SC",sans-serif;color:#182335;background:#f6f8fc;font-synthesis:none}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh}button,input,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}
+    .top{padding:23px clamp(16px,4vw,42px);display:flex;justify-content:space-between;gap:20px;align-items:center;border-bottom:1px solid #e1e6ee;background:#fff}
+    .eyebrow{font-size:11px;font-weight:750;letter-spacing:1.6px;color:#687a98;text-transform:uppercase}.title{font-size:clamp(22px,3vw,30px);font-weight:790;letter-spacing:-.7px;margin:5px 0 3px}
+    .subtitle{color:#607089;font-size:13px;margin:0}.badge{white-space:nowrap;background:#fff4da;color:#86620c;padding:8px 12px;border-radius:100px;font-size:12px;font-weight:750;border:1px solid #f1dd9b}
+    .wrap{max-width:1520px;margin:auto;padding:22px clamp(12px,3vw,40px) 30px;display:grid;grid-template-columns:355px minmax(0,1fr);align-items:start;gap:18px}
+    .sidebar{display:grid;gap:15px}.card,.mapcard{border:1px solid #e1e6ee;border-radius:17px;background:#fff;box-shadow:0 6px 28px rgba(26,46,72,.045);overflow:hidden}
+    .card{padding:18px}.card h2,.map-header h2{margin:0;font-size:15px;font-weight:780}.card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px}.count{font-size:11px;background:#edf3ff;color:#235aa7;padding:5px 9px;border-radius:20px}
+    .muted{font-size:12px;color:#6c7a8e;line-height:1.55}.row{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid #d9e1ec;background:#fff;color:#30425d;border-radius:10px;padding:9px 12px;font-size:12px;font-weight:700;transition:background .15s;line-height:1.25}
+    .btn:hover{background:#f1f5fb}.btn.primary{background:#2563eb;border-color:#2563eb;color:white}.btn.primary:hover{background:#194fcd}.btn.danger{color:#ae3333}.btn.active{background:#eaf1ff;color:#2059bf;border-color:#9ebdfa}
+    .field{display:block;font-size:11px;font-weight:750;color:#53627a;margin-bottom:5px}.fieldbox{width:100%;border:1px solid #d7e0eb;border-radius:9px;padding:10px 11px;background:#fff;color:#1b2e47;min-width:0;font-size:13px}
+    .fieldbox:focus{outline:2px solid #bbd3ff;border-color:#4e80df}.form{display:grid;gap:11px}.duo{display:grid;grid-template-columns:1fr 1fr;gap:9px}.form .primary{width:100%;margin-top:2px}
+    .timeline{display:grid;gap:8px;max-height:310px;overflow:auto;padding-right:3px}.record{border:1px solid #e5ebf3;border-radius:12px;display:flex;align-items:center;gap:6px;padding:9px}
+    .record.selected{background:#f0f5ff;border-color:#a9c6fa}.record-main{border:0;background:none;text-align:left;min-width:0;flex:1;padding:0;cursor:pointer;color:inherit}
+    .record-title{font-size:12px;font-weight:750;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.record-sub{font-size:11px;color:#708098;line-height:1.55;margin-top:3px}
+    .small-delete{padding:6px;border:0;background:transparent;color:#8b9ab0;border-radius:8px}.small-delete:hover{background:#fee8e8;color:#ae3333}
+    .mapcol{min-width:0}.map-header{padding:16px 18px;display:flex;gap:12px;justify-content:space-between;align-items:center;border-bottom:1px solid #e5eaf1;flex-wrap:wrap}
+    .map-header .meta{font-size:11px;color:#708098;margin-top:4px}.map-wrap{height:min(67vh,740px);min-height:390px;position:relative;background:#eaf1f6}
+    #map{width:100%;height:100%}#map iframe{border:0;width:100%;height:100%;display:block}
+    .map-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:12px 17px;border-top:1px solid #e5eaf1;font-size:12px}
+    .map-footer a{color:#1c5dba;font-weight:700;text-decoration:none}.map-footer a:hover{text-decoration:underline}
+    .switch{display:flex;gap:5px;background:#f1f5fa;padding:4px;border-radius:12px}.switch .btn{padding:8px 10px;background:transparent;border-color:transparent}.switch .btn.active{background:white;color:#164da7;border-color:#d7e3f5;box-shadow:0 1px 3px rgba(24,47,83,.08)}
+    .keypanel{border-top:1px solid #e1e6ee;padding:15px 18px;background:#fbfcff}.keypanel[hidden]{display:none}
+    .key-row{display:flex;gap:8px;margin:9px 0}.key-row input{flex:1;min-width:0}.key-row button{white-space:nowrap}
+    #status{font-size:12px;line-height:1.5;color:#4d6582;min-height:18px;margin:12px 3px 0}
+    .notes{padding:15px 18px;margin-top:14px;background:#fff;border:1px solid #e1e6ee;border-radius:15px;font-size:12px;line-height:1.7;color:#5f6d7c}
+    .notes strong{color:#30435b}.empty{color:#738299;padding:20px 0;text-align:center;font-size:12px}.map-error{display:flex;align-items:center;justify-content:center;height:100%;padding:28px;text-align:center;color:#496079;font-size:13px}
+    .check{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#50647e;font-weight:650}.check input{accent-color:#2563eb}
+    @media(max-width:940px){.wrap{grid-template-columns:1fr}.mapcol{order:-1}.sidebar{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}.sidebar .card:first-child{grid-row:span 2}.map-wrap{height:53vh;min-height:320px}}
+    @media(max-width:620px){.top{padding:17px 15px}.top .subtitle{max-width:250px}.badge{font-size:10px;padding:7px 8px}.wrap{padding:12px;gap:13px}.sidebar{grid-template-columns:1fr}.sidebar .card:first-child{grid-row:auto}.map-wrap{height:49vh;min-height:300px}.map-header{padding:12px}.map-footer{padding:10px 12px}.key-row{flex-wrap:wrap}.key-row button{width:100%}.timeline{max-height:250px}}
+  </style>
+</head>
+<body>
+  <header class="top">
+    <div>
+      <div class="eyebrow">OpenAI-Pub / Standalone experiment</div>
+      <h1 class="title">AirTag Location Timeline</h1>
+      <p class="subtitle">地图标点、历史轨迹与本地记录 · 纯前端 Demo</p>
+    </div>
+    <span class="badge">模拟数据 · 未连接 Find My</span>
+  </header>
+  <div class="wrap">
+    <aside class="sidebar">
+      <section class="card">
+        <div class="card-head"><h2>历史位置</h2><span class="count" id="pointCount">0 points</span></div>
+        <div class="timeline" id="timeline" aria-label="历史位置列表"></div>
+        <div class="row" style="margin-top:12px">
+          <button class="btn" id="sampleBtn" type="button">加载演示轨迹</button>
+          <button class="btn danger" id="clearBtn" type="button">清空全部</button>
+        </div>
+      </section>
+      <section class="card">
+        <div class="card-head"><h2>新增定位点</h2></div>
+        <form id="pointForm" class="form">
+          <div><label class="field" for="label">名称</label><input class="fieldbox" id="label" placeholder="例如：AirTag 最近位置" required maxlength="100"></div>
+          <div class="duo">
+            <div><label class="field" for="lat">纬度 Latitude</label><input class="fieldbox" id="lat" type="number" step="any" min="-90" max="90" placeholder="32.2988" required></div>
+            <div><label class="field" for="lng">经度 Longitude</label><input class="fieldbox" id="lng" type="number" step="any" min="-180" max="180" placeholder="-90.1848" required></div>
+          </div>
+          <div><label class="field" for="reportedAt">实际位置时间（本地时区）</label><input class="fieldbox" id="reportedAt" type="datetime-local" required></div>
+          <button class="btn primary" type="submit">+ 添加到地图和本地记录</button>
+          <button class="btn" id="phoneGpsBtn" type="button">使用 iPhone 自身 GPS 添加点（非 AirTag）</button>
+        </form>
+      </section>
+      <section class="card">
+        <div class="card-head"><h2>导入 / 导出</h2></div>
+        <p class="muted">支持 JSON / GeoJSON / CSV。数据保存在当前浏览器的 localStorage；没有上传到 GitHub 仓库。</p>
+        <div class="row" style="margin:12px 0">
+          <button class="btn" id="csvBtn" type="button">导出 CSV</button>
+          <button class="btn" id="jsonBtn" type="button">导出 JSON</button>
+        </div>
+        <label class="field" for="importFile">导入本地位置文件</label>
+        <input id="importFile" class="fieldbox" type="file" accept=".csv,.json,.geojson,text/csv,application/json">
+        <p class="muted" style="margin-bottom:0">CSV 列名：latitude, longitude, reported_at_utc, label, source。重复导入会按坐标、时间和名称去重。</p>
+      </section>
+    </aside>
+    <main class="mapcol">
+      <section class="mapcard">
+        <div class="map-header">
+          <div><h2>地图图层</h2><div id="mapModeText" class="meta">OpenStreetMap · 多点预览</div></div>
+          <div class="switch" role="group" aria-label="切换地图">
+            <button class="btn active" id="osmBtn" type="button">多点地图</button>
+            <button class="btn" id="googleBtn" type="button">Google Maps</button>
+          </div>
+        </div>
+        <div class="map-wrap"><div id="map"></div></div>
+        <div class="map-footer">
+          <label class="check"><input type="checkbox" id="routeToggle" checked> 连线显示轨迹</label>
+          <a id="openGoogle" href="https://www.google.com/maps" target="_blank" rel="noopener noreferrer">在 Google 地图打开所选点 ↗</a>
+        </div>
+        <div class="keypanel" id="keyPanel" hidden>
+          <strong style="font-size:13px">Google Maps 多点图层</strong>
+          <p class="muted" style="margin:6px 0">不填 API key 可预览<strong>单个</strong> Google 地图标点。要在 Google 地图底图上同时显示所有标点和轨迹，需要启用 Google Maps JavaScript API。</p>
+          <div class="key-row"><input class="fieldbox" type="password" autocomplete="off" id="googleKey" placeholder="粘贴浏览器受限的 Google Maps API key"><button class="btn primary" id="activateGoogle" type="button">启用多点 Google 地图</button></div>
+          <p class="muted" style="margin:0">Key 仅用于当前浏览器会话，不提交到仓库。务必在 Google Cloud 将网站来源限制为 https://wangcanhao-cmd.github.io/*，并仅允许 Maps JavaScript API。</p>
+        </div>
+      </section>
+      <p role="status" aria-live="polite" id="status"></p>
+      <section class="notes">
+        <strong>数据来源说明：</strong>目前只有模拟点、手动输入、导入文件及自愿授权的 iPhone GPS，没有读取 AirTag / Find My 的能力。iPhone GPS 不是 AirTag 的实测位置。Google 地图可能向 Google 发送所显示的坐标；浏览器本地数据也不是加密保险库。后续接入位置 API 时应保留 <code>reported_at_utc</code> 与抓取时间的区别。
+      </section>
+    </main>
+  </div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    "use strict";
+    const STORAGE_KEY = "airtag-map-demo-points-v1";
+    const el = (id) => document.getElementById(id);
+    const centerDefault = {lat:32.2988, lng:-90.1848};
+    let points = [], selectedId = null, mode = "osm", osmMap = null, osmLayer = null, routeLayer = null;
+    let googleMap = null, googleMarkers = [], googleLine = null, googleLibraries = null;
+    function notify(message){el("status").textContent = message;}
+    function uid(){return (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(36).slice(2);}
+    function localDateValue(date){const shifted = new Date(date.getTime()-date.getTimezoneOffset()*60000);return shifted.toISOString().slice(0,16);}
+    function samples(){
+      const base = Date.now()-3*3600000;
+      return [
+        {id:uid(),label:"模拟点 A · Jackson",lat:32.2988,lng:-90.1848,timestamp:new Date(base).toISOString(),source:"simulated"},
+        {id:uid(),label:"模拟点 B · Clinton",lat:32.3415,lng:-90.3218,timestamp:new Date(base+3600000).toISOString(),source:"simulated"},
+        {id:uid(),label:"模拟点 C · Vicksburg",lat:32.3526,lng:-90.8779,timestamp:new Date(base+7200000).toISOString(),source:"simulated"}
+      ];
+    }
+    function normalize(raw){
+      if(!raw || typeof raw !== "object") throw Error("位置记录不是对象");
+      const lat = Number(raw.lat ?? raw.latitude);
+      const lng = Number(raw.lng ?? raw.lon ?? raw.longitude);
+      if(!Number.isFinite(lat)||!Number.isFinite(lng)||lat < -90||lat > 90||lng < -180||lng > 180) throw Error("无效经纬度");
+      const date = new Date(raw.timestamp ?? raw.reported_at_utc ?? raw.time ?? raw.date ?? Date.now());
+      if(Number.isNaN(date.getTime())) throw Error("无效时间");
+      const label = String(raw.label ?? raw.name ?? "Imported point").slice(0,100);
+      const source = String(raw.source ?? "imported").slice(0,50);
+      const accuracy = Number(raw.accuracy_m);
+      return {id:uid(),lat,lng,label,timestamp:date.toISOString(),source,accuracy_m:raw.accuracy_m !== undefined && Number.isFinite(accuracy)?accuracy:undefined};
+    }
+    function sorted(){return [...points].sort((a,b)=>a.timestamp.localeCompare(b.timestamp));}
+    function save(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(points));}catch(e){notify("无法写入本地浏览器存储，请先导出文件备份。");}}
+    function formatDate(time){return new Date(time).toLocaleString("zh-CN",{month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit"});}
+    function sourceName(s){return ({simulated:"模拟数据",manual:"手动标点","iphone-gps":"iPhone GPS",imported:"导入文件"})[s] || s;}
+    function current(){return points.find(p=>p.id===selectedId) || sorted().at(-1) || null;}
+    function markerPopup(p){
+      const node=document.createElement("div");
+      const title=document.createElement("strong"); title.textContent=p.label;node.appendChild(title);
+      const details=document.createElement("div");details.textContent=formatDate(p.timestamp)+" · "+sourceName(p.source);node.appendChild(details);
+      const coords=document.createElement("div");coords.textContent=p.lat.toFixed(6)+", "+p.lng.toFixed(6);node.appendChild(coords);
+      return node;
+    }
+    function renderList(){
+      const target=el("timeline");target.replaceChildren();el("pointCount").textContent=points.length+" points";
+      if(!points.length){const d=document.createElement("div");d.className="empty";d.textContent="尚无定位点";target.appendChild(d);}
+      const list=sorted().reverse();
+      list.forEach((p,i)=>{
+        const item=document.createElement("div");item.className="record"+(p.id===selectedId?" selected":"");
+        const open=document.createElement("button");open.type="button";open.className="record-main";open.title="查看此位置";
+        const title=document.createElement("div");title.className="record-title";title.textContent=p.label;
+        const sub=document.createElement("div");sub.className="record-sub";sub.textContent=formatDate(p.timestamp)+" · "+sourceName(p.source)+"\n"+p.lat.toFixed(5)+", "+p.lng.toFixed(5);
+        open.append(title,sub);open.addEventListener("click",()=>selectPoint(p.id));
+        const remove=document.createElement("button");remove.type="button";remove.className="small-delete";remove.title="删除此点";remove.textContent="✕";remove.setAttribute("aria-label","删除 "+p.label);
+        remove.addEventListener("click",()=>{points=points.filter(x=>x.id!==p.id);if(selectedId===p.id)selectedId=sorted().at(-1)?.id||null;save();render();notify("已删除位置记录。");});
+        item.append(open,remove);target.appendChild(item);
+      });
+      const p=current();el("openGoogle").href=p?"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(p.lat+","+p.lng):"https://www.google.com/maps";
+    }
+    function selectPoint(id){selectedId=id;renderList();if(mode==="google-preview"){drawGooglePreview();}else if(mode==="osm"&&osmMap){const p=current();if(p){osmMap.setView([p.lat,p.lng],Math.max(osmMap.getZoom(),12));}}else if(mode==="google"&&googleMap){const p=current();if(p){googleMap.panTo({lat:p.lat,lng:p.lng});googleMap.setZoom(Math.max(googleMap.getZoom(),12));}}}
+    function cleanupMap(){
+      if(osmMap){osmMap.remove();osmMap=null;osmLayer=null;routeLayer=null;}
+      for(const m of googleMarkers)m.map=null;googleMarkers=[];
+      if(googleLine){googleLine.setMap(null);googleLine=null;} googleMap=null;
+      el("map").replaceChildren();
+    }
+    function fitOsm(){
+      if(!osmMap||!points.length)return;
+      const bounds=window.L.latLngBounds(points.map(p=>[p.lat,p.lng]));
+      points.length===1?osmMap.setView([points[0].lat,points[0].lng],12):osmMap.fitBounds(bounds.pad(.16),{maxZoom:14});
+    }
+    function drawOsm(){
+      if(!window.L){el("map").innerHTML='<div class="map-error">OpenStreetMap 地图库加载失败，请联网刷新。</div>';return;}
+      if(!osmMap){
+        osmMap=L.map(el("map"),{zoomControl:true}).setView([centerDefault.lat,centerDefault.lng],9);
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',maxZoom:19}).addTo(osmMap);
+        osmLayer=L.layerGroup().addTo(osmMap);
+      }
+      osmLayer.clearLayers();if(routeLayer){osmMap.removeLayer(routeLayer);routeLayer=null;}
+      sorted().forEach((p,i)=>{
+        const m=L.circleMarker([p.lat,p.lng],{radius:p.id===selectedId?10:8,color:"#ffffff",weight:2,fillColor:p.source==="simulated"?"#2563eb":"#ef8b32",fillOpacity:1});
+        m.bindPopup(markerPopup(p));m.on("click",()=>selectPoint(p.id));m.addTo(osmLayer);
+      });
+      if(el("routeToggle").checked&&points.length>=2){routeLayer=L.polyline(sorted().map(p=>[p.lat,p.lng]),{color:"#2563eb",weight:3,opacity:.85,dashArray:"7 6"}).addTo(osmMap);}
+      setTimeout(()=>{if(osmMap)osmMap.invalidateSize();},0);
+    }
+    function drawGooglePreview(){
+      const p=current();const target=el("map");target.replaceChildren();
+      if(!p){const msg=document.createElement("div");msg.className="map-error";msg.textContent="添加位置后可在 Google 地图查看标点。";target.appendChild(msg);return;}
+      const frame=document.createElement("iframe");frame.title="Google Maps 单点预览："+p.label;frame.loading="lazy";frame.referrerPolicy="no-referrer-when-downgrade";
+      frame.src="https://www.google.com/maps?q="+encodeURIComponent(p.lat+","+p.lng)+"&z=13&output=embed";
+      target.appendChild(frame);
+    }
+    function fitGoogle(){
+      if(!googleMap||!points.length)return;
+      const b=new google.maps.LatLngBounds();points.forEach(p=>b.extend({lat:p.lat,lng:p.lng}));
+      if(points.length===1){googleMap.setCenter({lat:points[0].lat,lng:points[0].lng});googleMap.setZoom(12);}
+      else googleMap.fitBounds(b,55);
+    }
+    function drawGoogle(){
+      if(!googleMap)return;
+      for(const m of googleMarkers)m.map=null;googleMarkers=[];
+      if(googleLine){googleLine.setMap(null);googleLine=null;}
+      sorted().forEach((p,i)=>{
+        const pin=new googleLibraries.PinElement({glyph:String(i+1),background:p.source==="simulated"?"#2563eb":"#ef8b32",borderColor:"#ffffff",glyphColor:"#ffffff"});
+        const marker=new googleLibraries.AdvancedMarkerElement({map:googleMap,position:{lat:p.lat,lng:p.lng},title:p.label,content:pin.element});
+        marker.addListener("click",()=>selectPoint(p.id));googleMarkers.push(marker);
+      });
+      if(el("routeToggle").checked&&points.length>1){googleLine=new google.maps.Polyline({map:googleMap,path:sorted().map(p=>({lat:p.lat,lng:p.lng})),strokeColor:"#2563eb",strokeWeight:3,strokeOpacity:.87});}
+    }
+    function setMode(target){
+      cleanupMap();mode=target;
+      el("osmBtn").classList.toggle("active",target==="osm");el("googleBtn").classList.toggle("active",target!=="osm");
+      el("keyPanel").hidden=target==="osm"||target==="google";
+      if(target==="osm"){el("mapModeText").textContent="OpenStreetMap · 同时显示所有位置";drawOsm();fitOsm();}
+      else if(target==="google-preview"){el("mapModeText").textContent="Google Maps · 单点预览（多点需 API key）";drawGooglePreview();}
+      else{el("mapModeText").textContent="Google Maps · 多点标记与历史轨迹";googleMap=new googleLibraries.Map(el("map"),{center:centerDefault,zoom:9,mapId:"DEMO_MAP_ID",mapTypeControl:false,streetViewControl:false});drawGoogle();fitGoogle();}
+      renderList();
+    }
+    function render(){renderList();if(mode==="osm"){drawOsm();fitOsm();}else if(mode==="google-preview")drawGooglePreview();else{drawGoogle();fitGoogle();}}
+    function addPoint(data){const p=normalize(data);points.push(p);selectedId=p.id;save();render();return p;}
+    function demoReset(){
+      if(points.length&&!confirm("这会覆盖当前浏览器中的所有位置记录。建议先导出数据，确定继续？"))return;
+      points=samples();selectedId=points.at(-1).id;save();render();notify("已加载 3 个模拟位置。这不是 AirTag 的真实轨迹。");
+    }
+    function csvEscape(value){const s=String(value??"");return /[,"\r\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;}
+    function exportFile(filename,data,mime){
+      const blob=new Blob([data],{type:mime});const url=URL.createObjectURL(blob);const a=document.createElement("a");
+      a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+    }
+    function parseCsv(text){
+      text=text.replace(/^\uFEFF/,"");const rows=[];let row=[],field="",quoted=false;
+      for(let i=0;i<text.length;i++){
+        const ch=text[i];
+        if(quoted){if(ch==='"'&&text[i+1]==='"'){field+='"';i++;}else if(ch==='"')quoted=false;else field+=ch;}
+        else if(ch==='"')quoted=true;
+        else if(ch===","){row.push(field);field="";}
+        else if(ch==="\n"||ch==="\r"){if(ch==="\r"&&text[i+1]==="\n")i++;row.push(field);if(row.some(c=>c.trim()))rows.push(row);row=[];field="";}
+        else field+=ch;
+      }
+      if(quoted)throw Error("CSV 引号未闭合");
+      row.push(field);if(row.some(c=>c.trim()))rows.push(row);
+      if(rows.length<2)throw Error("CSV 没有数据行");
+      const headers=rows.shift().map(h=>h.trim().toLowerCase());
+      return rows.map(r=>Object.fromEntries(headers.map((h,i)=>[h,r[i]??""])));
+    }
+    async function importFile(file){
+      if(file.size>3*1024*1024)throw Error("文件不能超过 3 MB");
+      const body=await file.text();let data;
+      if(file.name.toLowerCase().endsWith(".csv"))data=parseCsv(body);
+      else{
+        const parsed=JSON.parse(body);
+        if(parsed.type==="FeatureCollection"&&Array.isArray(parsed.features)){
+          data=parsed.features.filter(f=>f?.geometry?.type==="Point").map(f=>({...f.properties,lat:f.geometry.coordinates[1],lng:f.geometry.coordinates[0]}));
+        }else data=Array.isArray(parsed)?parsed:parsed.points;
+      }
+      if(!Array.isArray(data)||!data.length)throw Error("没有可导入的位置数组");
+      if(data.length>10000)throw Error("单次最多导入 10,000 个点");
+      const imported=data.map(normalize);
+      const dedup=new Set(points.map(p=>[p.lat,p.lng,p.timestamp,p.label].join("|")));let count=0;
+      for(const p of imported){const key=[p.lat,p.lng,p.timestamp,p.label].join("|");if(!dedup.has(key)){points.push(p);dedup.add(key);count++;}}
+      selectedId=sorted().at(-1)?.id||null;save();render();notify("导入完成：新增 "+count+" 个点，跳过 "+(imported.length-count)+" 个重复点。");
+    }
+    async function googleActivate(){
+      const key=el("googleKey").value.trim();
+      if(!key){notify("请先填写 Google Maps JavaScript API key。");return;}
+      const btn=el("activateGoogle");btn.disabled=true;btn.textContent="正在加载...";
+      try{
+        if(!window.google?.maps){
+          await new Promise((resolve,reject)=>{
+            const script=document.createElement("script");
+            const timer=setTimeout(()=>reject(Error("Google Maps 加载超时")),20000);
+            script.src="https://maps.googleapis.com/maps/api/js?key="+encodeURIComponent(key)+"&v=weekly&libraries=marker";
+            script.async=true;
+            script.onload=()=>{clearTimeout(timer);resolve();};
+            script.onerror=()=>{clearTimeout(timer);reject(Error("Google Maps 脚本无法加载"));};
+            document.head.appendChild(script);
+          });
+        }
+        if(!window.google?.maps)throw Error("Google Maps API 未初始化");
+        const [maps,markers]=await Promise.all([google.maps.importLibrary("maps"),google.maps.importLibrary("marker")]);
+        googleLibraries={Map:maps.Map,AdvancedMarkerElement:markers.AdvancedMarkerElement,PinElement:markers.PinElement};
+        sessionStorage.setItem("airtag-map-demo-google-key",key);
+        setMode("google");notify("已启用 Google Maps 多点图层。API Key 仅保存在此浏览器会话。");
+      }catch(e){notify("Google Maps 加载失败："+e.message+"。请检查密钥、API 启用状态、来源限制和账单设置。");}
+      finally{btn.disabled=false;btn.textContent="启用多点 Google 地图";}
+    }
+    el("pointForm").addEventListener("submit",e=>{
+      e.preventDefault();
+      try{addPoint({label:el("label").value,lat:el("lat").value,lng:el("lng").value,timestamp:new Date(el("reportedAt").value).toISOString(),source:"manual"});el("label").value="";notify("定位点已保存到当前浏览器，并显示在地图上。");}
+      catch(err){notify("添加失败："+err.message);}
+    });
+    el("phoneGpsBtn").addEventListener("click",()=>{
+      if(!navigator.geolocation){notify("该浏览器无法使用定位权限。");return;}
+      notify("正在请求 iPhone 定位权限（不是 AirTag 定位）...");
+      navigator.geolocation.getCurrentPosition(pos=>{
+        addPoint({label:"iPhone GPS · "+new Date().toLocaleTimeString("zh-CN"),lat:pos.coords.latitude,lng:pos.coords.longitude,timestamp:new Date(pos.timestamp).toISOString(),source:"iphone-gps",accuracy_m:pos.coords.accuracy});
+        notify("已保存 iPhone GPS 点（精度约 "+Math.round(pos.coords.accuracy)+" 米），不是 AirTag 实际定位。");
+      },err=>notify("无法获得 iPhone 位置："+err.message),{enableHighAccuracy:true,timeout:15000,maximumAge:0});
+    });
+    el("sampleBtn").addEventListener("click",demoReset);
+    el("clearBtn").addEventListener("click",()=>{if(!points.length)return;if(!confirm("确定删除本浏览器中的全部位置记录？请先导出备份。"))return;points=[];selectedId=null;save();render();notify("已清空本地记录。");});
+    el("csvBtn").addEventListener("click",()=>{
+      const columns=["latitude","longitude","reported_at_utc","label","source","accuracy_m"];
+      const csv=[columns.join(","),...sorted().map(p=>[p.lat,p.lng,p.timestamp,p.label,p.source,p.accuracy_m].map(csvEscape).join(","))].join("\r\n");
+      exportFile("airtag-map-timeline.csv","\uFEFF"+csv,"text/csv;charset=utf-8");notify("已生成 CSV 下载文件。");
+    });
+    el("jsonBtn").addEventListener("click",()=>{exportFile("airtag-map-timeline.json",JSON.stringify({version:1,generated_at_utc:new Date().toISOString(),points:sorted()},null,2),"application/json");notify("已生成 JSON 下载文件。");});
+    el("importFile").addEventListener("change",async e=>{
+      const file=e.target.files?.[0];if(!file)return;
+      try{await importFile(file);}catch(err){notify("导入失败："+err.message);}
+      e.target.value="";
+    });
+    el("osmBtn").addEventListener("click",()=>setMode("osm"));
+    el("googleBtn").addEventListener("click",()=>setMode(googleLibraries?"google":"google-preview"));
+    el("activateGoogle").addEventListener("click",googleActivate);
+    el("routeToggle").addEventListener("change",()=>{if(mode==="osm")drawOsm();else if(mode==="google")drawGoogle();});
+    el("reportedAt").value=localDateValue(new Date());
+    try{
+      const raw=localStorage.getItem(STORAGE_KEY);
+      points=raw===null?samples():JSON.parse(raw).map(normalize);
+      if(raw===null)save();
+      selectedId=sorted().at(-1)?.id||null;
+    }catch(err){points=[];notify("本地数据读取失败，未自动覆盖。请检查浏览器存储。");}
+    try{const key=sessionStorage.getItem("airtag-map-demo-google-key");if(key)el("googleKey").value=key;}catch(e){}
+    setMode("osm");
+    if(!el("status").textContent)notify("当前显示模拟数据。点击“Google Maps”可预览单点；启用 Maps JavaScript API 后可显示完整 Google 多点图层。");
+  </script>
+</body>
+</html>
