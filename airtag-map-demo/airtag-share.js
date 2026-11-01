@@ -54,15 +54,11 @@
       const url=getLink();
       // Perform navigation directly inside click handler: important for iOS popup blockers.
       cacheValue(url);
-      const opened=window.open(url,"_blank","noopener,noreferrer");
-      if(!opened) {
-        // Programmatic popup may be blocked; link remains accessible for direct tapping.
-        $("manualOpenLiveShare").href=url;
-        $("manualOpenLiveShare").hidden=false;
-        message("Safari 可能拦截了新窗口。请点击下方「直接打开 Apple 共享页面」。在 iOS 26 上可能跳转到「查找」App。");
-      } else {
-        message("已尝试打开 Apple 最新位置视图。只有 Apple 的页面会自动更新；本站尚不能读取经纬度或自动更新 Google 标点。");
-      }
+      $("manualOpenLiveShare").href=url;
+      $("manualOpenLiveShare").hidden=false;
+      message("正在跳转到 Apple 官方共享位置视图。该视图可以显示新的报告，但本站无法读取其经纬度。");
+      // Same-tab navigation works reliably with Safari universal links and avoids popup-blocker behavior.
+      window.location.assign(url);
     }catch(err){message("无法打开："+err.message);}
   }
   $("saveLiveShare").addEventListener("click",save);
