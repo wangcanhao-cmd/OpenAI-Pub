@@ -46,10 +46,27 @@
       <h1 class="title">AirTag Location Timeline</h1>
       <p class="subtitle">地图标点、历史轨迹与本地记录 · 纯前端 Demo</p>
     </div>
-    <span class="badge">地图链接导入 · 非自动接口</span>
+    <span class="badge">Apple 共享链接 · 手动打开更新</span>
   </header>
   <div class="wrap">
     <aside class="sidebar">
+      <section class="card">
+        <div class="card-head"><h2>Apple 共享位置 · 查看更新</h2><span class="count">官方 Find My</span></div>
+        <p class="muted" style="margin:0 0 12px">在 iPhone「查找 → 物品 → AirTag → 共享物品位置」生成官方链接。只需在下面粘贴一次，再点「查看／刷新 Apple 位置」即可重新打开 Apple 提供的最新位置视图。<strong>这不是坐标 API：不会自动移动本页的地图标点。</strong></p>
+        <div class="form">
+          <div><label class="field" for="liveShareUrl">Apple 共享物品位置链接</label><input class="fieldbox" id="liveShareUrl" type="url" spellcheck="false" autocapitalize="off" autocomplete="off" placeholder="https://find.apple.com/item/..."></div>
+          <div class="row">
+            <button type="button" class="btn" id="pasteLiveShare">粘贴链接</button>
+            <button type="button" class="btn" id="saveLiveShare">保存链接</button>
+          </div>
+          <label class="check"><input type="checkbox" id="rememberLiveShare"> 保留在此浏览器（可随时清除）</label>
+          <button type="button" class="btn primary" id="openLiveShare">查看／刷新 Apple 位置 ↗</button>
+          <a class="btn" id="manualOpenLiveShare" href="#" target="_blank" rel="noopener noreferrer" hidden>直接打开 Apple 共享页面 ↗</a>
+          <button type="button" class="btn danger" id="clearLiveShare">清除共享链接</button>
+        </div>
+        <p class="muted" id="liveShareStatus" role="status" aria-live="polite" style="margin:11px 0 0">尚未设置共享链接。</p>
+        <p class="muted" style="margin:10px 0 0">链接最长有效 7 天；Apple 可能要求登录。请勿在本站输入 Apple ID 密码。AirTag 靠近你手机时通常无法生成新的共享链接。</p>
+      </section>
       <section class="card">
         <div class="card-head"><h2>AirTag 位置导入</h2><span class="count">仅本机处理</span></div>
         <p class="muted" style="margin:0 0 12px">在 iPhone「查找」选择自己的 AirTag →「路线」→ 在 Apple 地图分享目的地链接。将链接粘贴在这里，提取其中的公开坐标并保存在本机浏览器。<strong>这不是 Find My API，无法自动刷新。</strong></p>
@@ -118,7 +135,7 @@
       </section>
       <p role="status" aria-live="polite" id="status"></p>
       <section class="notes">
-        <strong>数据来源说明：</strong>可从「查找 → 路线」生成的 Apple 地图链接<strong>手动</strong>导入 AirTag 目的地坐标，或使用模拟点、手动输入、文件、iPhone GPS。地图链接不是 Find My 原始位置报告；iPhone GPS 不是 AirTag 独立定位。本站没有登录 Apple 账户，也不会自动抓取 AirTag。Google 地图可能向 Google 发送所显示的坐标；浏览器本地数据不是加密保险库。实际报告时间与采集时间分别存储。
+        <strong>Apple 共享链接：</strong>可重复打开 Apple 官方最新位置视图，但出于官方接口和浏览器权限限制，本页不能从共享链接自动提取坐标、刷新 Google 标点或在后台采集。<strong>历史记录：</strong>可从「查找 → 路线」生成的 Apple 地图链接<strong>手动</strong>导入 AirTag 目的地坐标，或使用模拟点、手动输入、文件、iPhone GPS。地图链接不是 Find My 原始位置报告；iPhone GPS 不是 AirTag 独立定位。本站没有登录 Apple 账户，也不会自动抓取 AirTag。Google 地图可能向 Google 发送所显示的坐标；浏览器本地数据不是加密保险库。实际报告时间与采集时间分别存储。
       </section>
     </main>
   </div>
@@ -356,5 +373,6 @@
     if(!el("status").textContent)notify("未连接 Apple Find My API。可粘贴「查找 → 路线」生成的 Apple 地图坐标链接，或点击加载模拟轨迹进行测试。");
   </script>
   <script src="./airtag-connect.js"></script>
+  <script src="./airtag-share.js"></script>
 </body>
 </html>
