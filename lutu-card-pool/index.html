@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>率土之滨 · 我的卡池 v2026.11.25.1</title>
+<title>率土之滨 · 我的卡池 v2026.11.25.2</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f5f6f8;color:#111;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:12px}
@@ -40,7 +40,7 @@ button{min-height:40px;border:1px solid #d5d8dc;border-radius:9px;background:#ff
 </head>
 <body>
 <div class="app">
-<div class="title-row"><h1>率土之滨 · 我的卡池</h1><span class="version" title="页面功能版本">v2026.11.25.1</span></div>
+<div class="title-row"><h1>率土之滨 · 我的卡池</h1><span class="version" title="页面功能版本">v2026.11.25.2</span></div>
 <div class="sub">公开数据源：GitHub <code>OpenAI-Pub/lutu-card-pool/cards.json</code>。页面支持本地编辑；完成后可一键生成最新版 JSON 并进入 GitHub 提交。</div>
 <div class="status" id="status">正在读取 GitHub 最新卡池…</div>
 
@@ -66,6 +66,10 @@ button{min-height:40px;border:1px solid #d5d8dc;border-radius:9px;background:#ff
 <div class="bottom-tools">
   <button id="addBottom">＋ 新增武将</button>
   <button id="saveGitHubBottom">保存更新</button>
+</div>
+<div class="jump">
+  <input id="targetBottom" type="number" inputmode="numeric" min="1" placeholder="移动到第几位">
+  <button id="moveBottom">移动</button>
 </div>
 
 <div class="savebox" id="savebox">
@@ -198,7 +202,14 @@ document.getElementById('clearSearch').onclick=()=>{
 document.getElementById('add').onclick=addCard;
 document.getElementById('addBottom').onclick=addCard;
 document.getElementById('ownedFirst').onclick=()=>{d.sort((a,b)=>(b.owned?1:0)-(a.owned?1:0));sel=null;render()};
-document.getElementById('move').onclick=()=>{if(sel===null)return alert('先点一下要移动的卡片空白处');const p=parseInt(document.getElementById('target').value,10);if(!p||p<1)return alert('请输入有效位置');moveItem(sel,Math.min(p,d.length)-1)};
+function moveSelected(targetInputId){
+  if(sel===null)return alert('先点一下要移动的卡片空白处');
+  const p=parseInt(document.getElementById(targetInputId).value,10);
+  if(!Number.isInteger(p)||p<1)return alert('请输入有效位置');
+  moveItem(sel,Math.min(p,d.length)-1);
+}
+document.getElementById('move').onclick=()=>moveSelected('target');
+document.getElementById('moveBottom').onclick=()=>moveSelected('targetBottom');
 document.getElementById('copy').onclick=async()=>{
   renumber();
   const text=d.map(c=>`${c.owned?'[x]':'[ ]'} ${String(c.id).padStart(2,'0')} ${c.name}${c.note?' — '+c.note:''}`).join('\n');
