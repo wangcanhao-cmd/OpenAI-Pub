@@ -3,12 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>率土之滨 · 我的卡池</title>
+<title>率土之滨 · 我的卡池 v2026.11.25.1</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f5f6f8;color:#111;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:12px}
 .app{max-width:720px;margin:0 auto}
-h1{font-size:23px;margin:0 0 5px}
+h1{font-size:23px;margin:0}
+.title-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:5px}
+.version{display:inline-block;font-size:12px;font-weight:600;color:#245c9e;background:#eaf2ff;border:1px solid #c7daf8;border-radius:999px;padding:4px 8px;white-space:nowrap}
 .sub{font-size:13px;color:#666;line-height:1.5;margin-bottom:10px}
 .status{font-size:12px;background:#fff;border:1px solid #e2e5e9;border-radius:9px;padding:8px 10px;margin-bottom:10px}
 .tools{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-bottom:10px}
@@ -38,7 +40,7 @@ button{min-height:40px;border:1px solid #d5d8dc;border-radius:9px;background:#ff
 </head>
 <body>
 <div class="app">
-<h1>率土之滨 · 我的卡池</h1>
+<div class="title-row"><h1>率土之滨 · 我的卡池</h1><span class="version" title="页面功能版本">v2026.11.25.1</span></div>
 <div class="sub">公开数据源：GitHub <code>OpenAI-Pub/lutu-card-pool/cards.json</code>。页面支持本地编辑；完成后可一键生成最新版 JSON 并进入 GitHub 提交。</div>
 <div class="status" id="status">正在读取 GitHub 最新卡池…</div>
 
