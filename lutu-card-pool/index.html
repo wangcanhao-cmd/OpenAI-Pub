@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>率土之滨 · 我的卡池 v2026.11.25.2</title>
+<title>率土之滨 · 我的卡池 v2026.11.25.3</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f5f6f8;color:#111;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:12px}
@@ -32,6 +32,15 @@ button{min-height:40px;border:1px solid #d5d8dc;border-radius:9px;background:#ff
 .actions button{min-height:34px;font-size:12px;padding:0 3px}
 .footer{font-size:12px;color:#777;line-height:1.5;margin:10px 2px}
 .bottom-tools{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:2px 0 12px}
+.auth-panel{border:1px solid #c9d6e8;border-radius:10px;background:#fff;padding:12px;margin-bottom:10px}
+.auth-panel[hidden]{display:none}
+.auth-panel label{display:block;font-weight:600;font-size:13px;margin:8px 0 6px}
+.auth-panel input{width:100%;height:42px;border:1px solid #d5d8dc;border-radius:8px;font-size:16px;padding:8px}
+.auth-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:9px 0}
+.auth-help{color:#555;font-size:12px;line-height:1.65}
+.auth-panel a,.cloud-status a{color:#1760aa}
+.auth-panel .manual{margin-top:8px;width:100%}
+.cloud-status{font-size:12px;color:#555;margin:0 0 10px;line-height:1.5;overflow-wrap:anywhere}
 .savebox{display:none;background:#fff;border:1px solid #dfe3e7;border-radius:10px;padding:10px;margin-top:10px}
 .savebox textarea{width:100%;min-height:220px;border:1px solid #dfe3e7;border-radius:8px;padding:8px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
 .save-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:8px}
@@ -40,9 +49,21 @@ button{min-height:40px;border:1px solid #d5d8dc;border-radius:9px;background:#ff
 </head>
 <body>
 <div class="app">
-<div class="title-row"><h1>率土之滨 · 我的卡池</h1><span class="version" title="页面功能版本">v2026.11.25.2</span></div>
-<div class="sub">公开数据源：GitHub <code>OpenAI-Pub/lutu-card-pool/cards.json</code>。页面支持本地编辑；完成后可一键生成最新版 JSON 并进入 GitHub 提交。</div>
+<div class="title-row"><h1>率土之滨 · 我的卡池</h1><span class="version" title="页面功能版本">v2026.11.25.3</span></div>
+<div class="sub">公开数据源：GitHub <code>OpenAI-Pub/lutu-card-pool/cards.json</code>。页面支持本地编辑；首次授权 GitHub 后，点击“保存更新”即可直接提交 cards.json。</div>
 <div class="status" id="status">正在读取 GitHub 最新卡池…</div>
+<div class="cloud-status" id="cloudStatus" role="status" aria-live="polite">云端保存：首次使用需要授权 GitHub，Token 不会写入仓库。</div>
+<div class="auth-panel" id="authPanel" hidden>
+  <b>连接 GitHub，直接保存到仓库</b>
+  <label for="githubToken">GitHub Fine-grained Personal Access Token</label>
+  <input id="githubToken" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="在这里粘贴 Token（不要发送给任何人）">
+  <div class="auth-actions">
+    <button id="connectAndSave" type="button">连接并保存</button>
+    <button id="disconnectGitHub" type="button">断开授权</button>
+  </div>
+  <div class="auth-help">仅授权仓库 <b>wangcanhao-cmd/OpenAI-Pub</b>，选择 <b>Contents: Read and write</b>，建议 30 天有效期。Token 只保留在当前浏览器标签页的会话存储，不会写进源码、cards.json 或发送到其他网站。<a href="https://github.com/settings/personal-access-tokens/new?name=LuTu+Card+Pool&target_name=wangcanhao-cmd&expires_in=30&contents=write" target="_blank" rel="noopener noreferrer">创建限权 Token（GitHub）</a></div>
+  <button id="manualSave" class="manual" type="button">改用手动复制 JSON（备用）</button>
+</div>
 
 <div class="tools">
   <button id="add">＋ 新增武将</button>
@@ -79,7 +100,7 @@ button{min-height:40px;border:1px solid #d5d8dc;border-radius:9px;background:#ff
     <button id="copyJson">复制 JSON</button>
     <button id="openEdit">打开 GitHub 编辑页</button>
   </div>
-  <div class="footer">GitHub Pages 是静态站，不能匿名直接写回仓库。点“复制 JSON”后，在 GitHub 编辑页全选原内容并粘贴，再提交即可。提交后这个页面和 ChatGPT 都会读取新版本。</div>
+  <div class="footer">这是备用手动保存方式：复制 JSON，在 GitHub 编辑页替换文件内容并提交。日常请使用“保存更新”按钮。</div>
 </div>
 
 <div class="footer">本地编辑会自动保存在当前浏览器，刷新不会丢。GitHub 提交后才会成为所有设备和 ChatGPT 都能读取的正式版本。</div>
@@ -87,7 +108,123 @@ button{min-height:40px;border:1px solid #d5d8dc;border-radius:9px;background:#ff
 
 <script>
 const localKey='stzb_pub_cards_edit_v1';
-let d=[],sel=null,sourceUpdated='';
+const tokenKey='stzb_cards_github_token_session_v1';
+const githubContentApi='https://api.github.com/repos/wangcanhao-cmd/OpenAI-Pub/contents/lutu-card-pool/cards.json';
+let d=[],sel=null,sourceUpdated='',loadedSnapshot=null,savingToGitHub=false,githubTokenInMemory='';
+function cardsSnapshot(cards){
+  return JSON.stringify(cards.map((c,i)=>({id:i+1,owned:c.owned!==false,name:c.name||'',note:c.note||''})));
+}
+function getGitHubToken(){
+  if(githubTokenInMemory)return githubTokenInMemory;
+  try{return sessionStorage.getItem(tokenKey)||''}catch(e){return ''}
+}
+function setGitHubToken(value){
+  githubTokenInMemory=value;
+  try{if(value)sessionStorage.setItem(tokenKey,value);else sessionStorage.removeItem(tokenKey)}catch(e){}
+}
+function setCloudStatus(message,commitUrl){
+  const el=document.getElementById('cloudStatus');
+  el.textContent=message;
+  if(commitUrl && /^https:\/\/github\.com\/wangcanhao-cmd\/OpenAI-Pub\/commit\/[a-f0-9]+$/.test(commitUrl)){
+    const link=document.createElement('a');
+    link.href=commitUrl;link.target='_blank';link.rel='noopener noreferrer';link.textContent=' 查看提交记录';
+    el.appendChild(link);
+  }
+}
+function showAuthPanel(message){
+  const panel=document.getElementById('authPanel');
+  panel.hidden=false;
+  if(message)setCloudStatus(message);
+  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function hideAuthPanel(){document.getElementById('authPanel').hidden=true;}
+function utf8ToBase64(text){
+  const bytes=new TextEncoder().encode(text);
+  let binary='';
+  for(let i=0;i<bytes.length;i++)binary+=String.fromCharCode(bytes[i]);
+  return btoa(binary);
+}
+function base64ToUtf8(value){
+  const binary=atob(value.replace(/\s/g,''));
+  const bytes=Uint8Array.from(binary,c=>c.charCodeAt(0));
+  return new TextDecoder().decode(bytes);
+}
+function githubHeaders(token){
+  return {'Accept':'application/vnd.github+json','Authorization':'Bearer '+token,
+    'X-GitHub-Api-Version':'2022-11-28'};
+}
+async function githubResponse(response){
+  const body=await response.json().catch(()=>({}));
+  if(!response.ok){
+    const e=new Error('GitHub HTTP '+response.status+': '+(body.message||'请求失败'));
+    e.status=response.status;throw e;
+  }
+  return body;
+}
+async function saveDirectlyToGitHub(){
+  if(savingToGitHub)return;
+  const token=getGitHubToken();
+  if(!token){showAuthPanel('尚未授权 GitHub。请创建限权 Token，粘贴后点击“连接并保存”。');return;}
+  if(!loadedSnapshot){
+    showAuthPanel('网页尚未成功读取 GitHub 卡池。请检查网络并刷新，避免覆盖未知版本。');
+    return;
+  }
+  savingToGitHub=true;
+  document.getElementById('saveGitHub').disabled=true;
+  document.getElementById('saveGitHubBottom').disabled=true;
+  setCloudStatus('正在核对 GitHub 最新版本…');
+  try{
+    const currentResponse=await fetch(githubContentApi+'?ref=main',{headers:githubHeaders(token),cache:'no-store'});
+    const current=await githubResponse(currentResponse);
+    if(!current.sha || current.encoding!=='base64' || typeof current.content!=='string')
+      throw new Error('GitHub 文件响应缺少 SHA 或内容');
+    const remote=JSON.parse(base64ToUtf8(current.content));
+    if(!Array.isArray(remote.cards))throw new Error('GitHub cards.json 数据格式不正确');
+    const remoteSnapshot=cardsSnapshot(remote.cards);
+    if(remoteSnapshot!==loadedSnapshot){
+      setCloudStatus('检测到 GitHub 已有更新，未覆盖远端数据。请先使用备用方式备份本地 JSON，再重新打开页面核对。');
+      openSaveBox();
+      return;
+    }
+    const savedSnapshot=cardsSnapshot(d);
+    if(savedSnapshot===remoteSnapshot){
+      setCloudStatus('GitHub 内容已经是最新的，无需重复提交。');
+      hideAuthPanel();return;
+    }
+    const payload=buildJson();
+    setCloudStatus('正在直接提交 cards.json 至 GitHub…');
+    const response=await fetch(githubContentApi,{
+      method:'PUT',
+      headers:{...githubHeaders(token),'Content-Type':'application/json'},
+      body:JSON.stringify({
+        message:'Update LuTu card pool via editor',
+        content:utf8ToBase64(payload),
+        sha:current.sha,
+        branch:'main'
+      })
+    });
+    const result=await githubResponse(response);
+    if(!result.commit?.sha)throw new Error('GitHub 未返回提交记录，请核对仓库状态');
+    loadedSnapshot=savedSnapshot;
+    sourceUpdated=JSON.parse(payload).updatedAt;
+    saveLocal();
+    hideAuthPanel();
+    const editedAgain=cardsSnapshot(d)!==savedSnapshot;
+    setCloudStatus(editedAgain?'已成功提交，但保存期间又发生本地修改；请再保存一次。':'保存成功：GitHub 已收到新卡池，GitHub Pages 将自动重新部署。',result.commit.html_url);
+    document.getElementById('status').textContent='GitHub 已提交 · '+d.length+' 张 · '+sourceUpdated;
+  }catch(e){
+    if(e.status===401){setGitHubToken('');showAuthPanel('Token 无效或已过期（401）。请重新授权。');}
+    else if(e.status===403){showAuthPanel('GitHub 拒绝写入（403）。请确认 Token 已选择 OpenAI-Pub 并授予 Contents: Read and write。');}
+    else if(e.status===404){showAuthPanel('找不到仓库文件（404）。请检查 Token 的仓库访问权限。');}
+    else if(e.status===409){setCloudStatus('写入发生冲突（409），未覆盖其他设备的提交。请备份本地修改并刷新页面。');openSaveBox();}
+    else if(e.status===422){setCloudStatus('GitHub 拒绝本次数据提交（422）。请检查仓库权限或数据格式。');}
+    else setCloudStatus('保存未确认：'+(e.message||'网络异常')+'。本地修改仍保留，请查看 GitHub 提交记录后再重试。');
+  }finally{
+    savingToGitHub=false;
+    document.getElementById('saveGitHub').disabled=false;
+    document.getElementById('saveGitHubBottom').disabled=false;
+  }
+}
 
 function esc(s){return String(s).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
 function saveLocal(){localStorage.setItem(localKey,JSON.stringify({cards:d,sourceUpdated}))}
@@ -134,6 +271,7 @@ async function load(){
   }catch(e){
     document.getElementById('status').textContent='GitHub读取失败，尝试本地缓存：'+e.message;
   }
+  loadedSnapshot=remote&&Array.isArray(remote.cards)?cardsSnapshot(remote.cards):null;
   let local=null;
   try{local=JSON.parse(localStorage.getItem(localKey))}catch(e){}
   if(local && Array.isArray(local.cards) && local.sourceUpdated===remote?.updatedAt){
@@ -226,8 +364,23 @@ function openSaveBox(){
   box.style.display='block';
   box.scrollIntoView({behavior:'smooth',block:'start'});
 }
-document.getElementById('saveGitHub').onclick=openSaveBox;
-document.getElementById('saveGitHubBottom').onclick=openSaveBox;
+document.getElementById('saveGitHub').onclick=saveDirectlyToGitHub;
+document.getElementById('saveGitHubBottom').onclick=saveDirectlyToGitHub;
+document.getElementById('connectAndSave').onclick=()=>{
+  const input=document.getElementById('githubToken');
+  const token=input.value.trim();
+  if(!token){setCloudStatus('请先粘贴 GitHub Token。');return;}
+  setGitHubToken(token);
+  input.value='';
+  saveDirectlyToGitHub();
+};
+document.getElementById('disconnectGitHub').onclick=()=>{
+  setGitHubToken('');
+  document.getElementById('githubToken').value='';
+  hideAuthPanel();
+  setCloudStatus('已清除当前标签页的 GitHub 授权。');
+};
+document.getElementById('manualSave').onclick=openSaveBox;
 document.getElementById('copyJson').onclick=async()=>{
   const text=document.getElementById('jsonout').value||buildJson();
   try{await navigator.clipboard.writeText(text);alert('JSON 已复制')}catch(e){prompt('复制下面 JSON：',text)}
