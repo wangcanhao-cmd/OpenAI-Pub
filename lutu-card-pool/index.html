@@ -13,6 +13,10 @@ h1{font-size:23px;margin:0 0 5px}
 .status{font-size:12px;background:#fff;border:1px solid #e2e5e9;border-radius:9px;padding:8px 10px;margin-bottom:10px}
 .tools{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-bottom:10px}
 button{min-height:40px;border:1px solid #d5d8dc;border-radius:9px;background:#fff;font-size:13px;padding:7px 9px}
+.search{display:grid;grid-template-columns:minmax(0,1fr) 78px;gap:7px;margin-bottom:4px}
+.search input{width:100%;min-width:0;height:40px;border:1px solid #d5d8dc;border-radius:9px;padding:0 10px;font-size:16px}
+.search-summary{font-size:12px;color:#666;min-height:17px;margin-bottom:6px}
+.empty-search{padding:22px 12px;text-align:center;color:#777;background:#fff;border:1px solid #e4e6e8;border-radius:11px;margin-bottom:8px}
 .jump{display:grid;grid-template-columns:1fr 90px;gap:7px;margin-bottom:10px}
 .jump input{height:40px;border:1px solid #d5d8dc;border-radius:9px;padding:0 10px;font-size:16px}
 .card{background:#fff;border:1px solid #e4e6e8;border-radius:11px;padding:9px;margin-bottom:8px}
@@ -44,6 +48,12 @@ button{min-height:40px;border:1px solid #d5d8dc;border-radius:9px;background:#ff
   <button id="copy">复制为文字</button>
   <button id="saveGitHub">保存更新</button>
 </div>
+
+<div class="search" role="search">
+  <input id="searchCards" type="search" autocomplete="off" placeholder="搜索武将名称或备注" aria-label="搜索武将名称或备注">
+  <button id="clearSearch" type="button">清空</button>
+</div>
+<div class="search-summary" id="searchSummary" aria-live="polite"></div>
 
 <div class="jump">
   <input id="target" type="number" inputmode="numeric" min="1" placeholder="移动到第几位">
@@ -78,8 +88,13 @@ function saveLocal(){localStorage.setItem(localKey,JSON.stringify({cards:d,sourc
 function renumber(){d.forEach((c,i)=>c.id=i+1)}
 function render(){
   renumber();
-  document.getElementById('list').innerHTML='';
+  const list=document.getElementById('list');
+  list.innerHTML='';
+  const term=document.getElementById('searchCards').value.trim().toLocaleLowerCase();
+  let shown=0;
   d.forEach((c,i)=>{
+    if(term && !String(c.name||'').toLocaleLowerCase().includes(term) && !String(c.note||'').toLocaleLowerCase().includes(term))return;
+    shown++;
     const el=document.createElement('div');
     el.className='card'+(sel===i?' sel':'');
     el.dataset.i=i;
@@ -92,8 +107,15 @@ function render(){
     <div class="actions">
       <button class="top">置顶</button><button class="up">↑</button><button class="down">↓</button><button class="bottom">置底</button><button class="del">删除</button>
     </div>`;
-    document.getElementById('list').appendChild(el);
+    list.appendChild(el);
   });
+  if(term && shown===0){
+    const empty=document.createElement('div');
+    empty.className='empty-search';
+    empty.textContent='没有找到匹配的武将';
+    list.appendChild(empty);
+  }
+  document.getElementById('searchSummary').textContent=term?'找到 '+shown+' / '+d.length+' 张':'';
   document.getElementById('status').textContent='当前 '+d.length+' 张 · 本地编辑已保存';
   saveLocal();
 }
@@ -160,8 +182,17 @@ function addCard(){
   let p=raw.trim()===''?d.length:parseInt(raw,10);
   if(Number.isNaN(p))return alert('请输入数字');
   p=Math.max(0,Math.min(p,d.length));
-  d.splice(p,0,{id:0,owned:true,name:n.trim()||'新武将',note:''});sel=p;render();
+  d.splice(p,0,{id:0,owned:true,name:n.trim()||'新武将',note:''});sel=p;
+  document.getElementById('searchCards').value='';
+  render();
 }
+document.getElementById('searchCards').addEventListener('input',render);
+document.getElementById('clearSearch').onclick=()=>{
+  const search=document.getElementById('searchCards');
+  search.value='';
+  render();
+  search.focus();
+};
 document.getElementById('add').onclick=addCard;
 document.getElementById('addBottom').onclick=addCard;
 document.getElementById('ownedFirst').onclick=()=>{d.sort((a,b)=>(b.owned?1:0)-(a.owned?1:0));sel=null;render()};
